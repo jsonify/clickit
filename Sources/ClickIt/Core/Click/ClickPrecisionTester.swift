@@ -10,11 +10,11 @@ class ClickPrecisionTester: @unchecked Sendable {
     /// Shared instance of the precision tester
     static let shared = ClickPrecisionTester()
     
-    /// Maximum allowed timing deviation (5ms as per requirements)
-    private let maxTimingDeviation: TimeInterval = 0.005
+    /// Maximum allowed timing deviation (from AppConstants)
+    private let maxTimingDeviation: TimeInterval = AppConstants.maxClickTimingDeviation
     
-    /// Maximum allowed position deviation (1 pixel as per requirements)
-    private let maxPositionDeviation: CGFloat = 1.0
+    /// Maximum allowed position deviation (from AppConstants)
+    private let maxPositionDeviation: CGFloat = AppConstants.maxClickPositionDeviation
     
     /// Test results storage
     private var testResults: [PrecisionTestResult] = []
@@ -210,8 +210,8 @@ class ClickPrecisionTester: @unchecked Sendable {
         let systemInfo = ProcessInfo.processInfo
         let memoryGB = Double(systemInfo.physicalMemory) / 1_073_741_824 // Convert to GB
         
-        if memoryGB < 4.0 {
-            recommendations.append("Consider upgrading to at least 4GB RAM for optimal performance")
+        if memoryGB < AppConstants.minimumMemoryRequirementGB {
+            recommendations.append("Consider upgrading to at least \(Int(AppConstants.minimumMemoryRequirementGB))GB RAM for optimal performance")
         }
         
         return SystemValidationResult(

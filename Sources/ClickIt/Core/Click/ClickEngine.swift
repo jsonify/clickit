@@ -174,7 +174,7 @@ class ClickEngine: @unchecked Sendable {
         let elapsedNanos = (endTime - startTime) * UInt64(timeInfo.numer) / UInt64(timeInfo.denom)
         let elapsedMillis = Double(elapsedNanos) / 1_000_000.0
         
-        if elapsedMillis > (delay * 1000 + 5.0) {
+        if elapsedMillis > (delay * 1000 + AppConstants.maxClickTimingDeviation * 1000) {
             return (false, .timingConstraintViolation)
         }
         

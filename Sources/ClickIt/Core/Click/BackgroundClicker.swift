@@ -14,7 +14,7 @@ class BackgroundClicker: @unchecked Sendable {
     /// Cache for process information
     private var processCache: [String: pid_t] = [:]
     private var cacheUpdateTime: TimeInterval = 0
-    private let cacheValidityDuration: TimeInterval = 30.0 // 30 seconds
+    private let cacheValidityDuration: TimeInterval = AppConstants.processCacheValidityDuration
     
     /// Queue for background operations
     private let backgroundQueue = DispatchQueue(label: "com.clickit.background-clicker", qos: .userInteractive)

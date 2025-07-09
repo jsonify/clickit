@@ -45,6 +45,12 @@ struct AppConstants {
     static let maxClicksPerSecond: Double = 100.0
     static let maxConcurrentClicks: Int = 10
     
+    // Cache Configuration
+    static let processCacheValidityDuration: TimeInterval = 30.0 // 30 seconds
+    
+    // System Requirements
+    static let minimumMemoryRequirementGB: Double = 4.0
+    
     // Private initializer to prevent instantiation
     private init() {}
 }
