@@ -48,7 +48,13 @@ struct ClickPointSelector: View {
             // Selection methods
             VStack(spacing: 12) {
                 // Click-to-set button
-                Button(action: startClickSelection) {
+                Button {
+                    if isSelecting {
+                        cancelClickSelection()
+                    } else {
+                        startClickSelection()
+                    }
+                } label: {
                     HStack {
                         Image(systemName: isSelecting ? "stop.circle.fill" : "hand.tap.fill")
                         Text(isSelecting ? "Cancel Selection" : "Click to Set Point")
@@ -59,7 +65,9 @@ struct ClickPointSelector: View {
                 .controlSize(.large)
                 
                 // Manual input toggle
-                Button(action: { showingManualInput.toggle() }) {
+                Button {
+                    showingManualInput.toggle()
+                } label: {
                     HStack {
                         Image(systemName: "keyboard")
                         Text(showingManualInput ? "Hide Manual Input" : "Manual Input")
@@ -146,13 +154,6 @@ struct ClickPointSelector: View {
     }
     
     private func startClickSelection() {
-        if isSelecting {
-            // Cancel current selection
-            ClickCoordinateCapture.shared.stopCapture()
-            isSelecting = false
-            return
-        }
-        
         isSelecting = true
         clearValidationError()
         
@@ -172,6 +173,11 @@ struct ClickPointSelector: View {
         }
     }
     
+    private func cancelClickSelection() {
+        ClickCoordinateCapture.shared.stopCapture()
+        isSelecting = false
+        clearValidationError()
+    }
     
     private func setManualPoint() {
         clearValidationError()
@@ -194,8 +200,7 @@ struct ClickPointSelector: View {
         let screenFrame = NSScreen.main?.frame ?? CGRect.zero
         
         // Check if point is within screen bounds
-        if point.x < 0 || point.x > screenFrame.width || 
-           point.y < 0 || point.y > screenFrame.height {
+        if !screenFrame.contains(point) {
             validationError = "Coordinates must be within screen bounds (0,0) to (\(Int(screenFrame.width)),\(Int(screenFrame.height)))"
             return false
         }

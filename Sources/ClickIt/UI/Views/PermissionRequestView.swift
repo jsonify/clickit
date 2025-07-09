@@ -3,6 +3,7 @@ import SwiftUI
 struct PermissionRequestView: View {
     @EnvironmentObject private var permissionManager: PermissionManager
     @ObservedObject private var statusChecker = PermissionStatusChecker.shared
+    @Environment(\.dismiss) private var dismiss
     @State private var showingDetailedInstructions = false
     @State private var selectedPermission: PermissionType?
     @State private var isRequestingPermissions = false
@@ -49,7 +50,7 @@ struct PermissionRequestView: View {
             VStack(spacing: 12) {
                 if permissionManager.allPermissionsGranted {
                     Button("Continue") {
-                        // Handle continue action
+                        dismiss()
                     }
                     .buttonStyle(.borderedProminent)
                     .controlSize(.large)

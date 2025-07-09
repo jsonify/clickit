@@ -35,4 +35,8 @@ fastlane/test_output
 *.gcda
 *.gcno
 .vscode/launch.json
+<<<<<<< HEAD
+=======
+ClickIt.app/Contents/MacOS/ClickIt
+>>>>>>> origin/main
 dist/
