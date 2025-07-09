@@ -77,6 +77,14 @@ struct ContentView: View {
                     }
                     .buttonStyle(.bordered)
                     .controlSize(.regular)
+                    
+                    if let point = selectedClickPoint {
+                        Button("Test Click at Selected Point") {
+                            testClickAtPoint(point)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .controlSize(.regular)
+                    }
                 }
                 .padding()
                 .background(Color.blue.opacity(0.1))
@@ -112,6 +120,21 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showingWindowDetectionTest) {
             WindowDetectionTestView()
+        }
+    }
+    
+    private func testClickAtPoint(_ point: CGPoint) {
+        Task {
+            let configuration = ClickConfiguration(
+                type: .left,
+                location: point,
+                targetPID: nil,
+                delayBetweenDownUp: 0.01
+            )
+            
+            let result = await ClickCoordinator.shared.performSingleClick(configuration: configuration)
+            
+            print("Click test result: \(result)")
         }
     }
 }
