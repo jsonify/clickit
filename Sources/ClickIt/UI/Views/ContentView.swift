@@ -4,6 +4,7 @@ struct ContentView: View {
     @EnvironmentObject private var permissionManager: PermissionManager
     @State private var showingPermissionSetup = false
     @State private var showingWindowDetectionTest = false
+    @State private var selectedClickPoint: CGPoint?
     
     var body: some View {
         VStack(spacing: 24) {
@@ -60,8 +61,13 @@ struct ContentView: View {
                 CompactPermissionStatus()
             }
             
-            // Development Tools (only show when permissions are granted)
+            // Click Point Selection (only show when permissions are granted)
             if permissionManager.allPermissionsGranted {
+                ClickPointSelector { point in
+                    selectedClickPoint = point
+                }
+                
+                // Development Tools
                 VStack(spacing: 12) {
                     Text("Development Tools")
                         .font(.headline)
@@ -95,7 +101,7 @@ struct ContentView: View {
                 .font(.caption2)
                 .foregroundColor(.secondary)
         }
-        .frame(width: 350, height: 500)
+        .frame(width: 450, height: 700)
         .padding()
         .background(Color(NSColor.windowBackgroundColor))
         .onAppear {
