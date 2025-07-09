@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject private var permissionManager = PermissionManager.shared
+    @EnvironmentObject private var permissionManager: PermissionManager
     @State private var showingPermissionSetup = false
     
     var body: some View {
@@ -91,4 +91,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        .environmentObject(PermissionManager.shared)
 }

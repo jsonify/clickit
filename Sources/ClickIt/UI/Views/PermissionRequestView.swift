@@ -1,8 +1,8 @@
 import SwiftUI
 
 struct PermissionRequestView: View {
-    @StateObject private var permissionManager = PermissionManager.shared
-    @StateObject private var statusChecker = PermissionStatusChecker.shared
+    @EnvironmentObject private var permissionManager: PermissionManager
+    @ObservedObject private var statusChecker = PermissionStatusChecker.shared
     @State private var showingDetailedInstructions = false
     @State private var selectedPermission: PermissionType?
     @State private var isRequestingPermissions = false
@@ -320,4 +320,5 @@ struct PermissionInstructionsView: View {
 
 #Preview {
     PermissionRequestView()
+        .environmentObject(PermissionManager.shared)
 }

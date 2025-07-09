@@ -91,13 +91,18 @@ class PermissionManager: ObservableObject {
     }
     
     func openSystemSettings(for permission: PermissionType) {
-        let url: URL
+        let urlString: String
         
         switch permission {
         case .accessibility:
-            url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!
+            urlString = AppConstants.accessibilitySettingsURL
         case .screenRecording:
-            url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture")!
+            urlString = AppConstants.screenRecordingSettingsURL
+        }
+        
+        guard let url = URL(string: urlString) else {
+            print("Error: Invalid URL string for \(permission.rawValue) settings")
+            return
         }
         
         NSWorkspace.shared.open(url)

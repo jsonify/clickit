@@ -1,8 +1,8 @@
 import SwiftUI
 
 struct PermissionStatusIndicator: View {
-    @StateObject private var permissionManager = PermissionManager.shared
-    @StateObject private var statusChecker = PermissionStatusChecker.shared
+    @EnvironmentObject private var permissionManager: PermissionManager
+    @ObservedObject private var statusChecker = PermissionStatusChecker.shared
     @State private var showingPermissionView = false
     
     var body: some View {
@@ -67,7 +67,7 @@ struct PermissionStatusIndicator: View {
 // MARK: - Compact Permission Status
 
 struct CompactPermissionStatus: View {
-    @StateObject private var permissionManager = PermissionManager.shared
+    @EnvironmentObject private var permissionManager: PermissionManager
     let showText: Bool
     
     init(showText: Bool = true) {
@@ -121,7 +121,7 @@ struct PermissionDot: View {
 // MARK: - Permission Health Badge
 
 struct PermissionHealthBadge: View {
-    @StateObject private var statusChecker = PermissionStatusChecker.shared
+    @ObservedObject private var statusChecker = PermissionStatusChecker.shared
     @State private var healthReport: PermissionHealthReport?
     
     var body: some View {
@@ -181,4 +181,5 @@ struct PermissionHealthBadge: View {
         PermissionHealthBadge()
     }
     .padding()
+    .environmentObject(PermissionManager.shared)
 }
