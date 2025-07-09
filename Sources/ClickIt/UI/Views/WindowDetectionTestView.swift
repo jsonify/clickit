@@ -5,6 +5,7 @@ struct WindowDetectionTestView: View {
     @StateObject private var windowManager = WindowManager.shared
     @StateObject private var targeter = WindowTargeter.shared
     @StateObject private var tester = WindowDetectionTester.shared
+    @Environment(\.dismiss) private var dismiss
     
     @State private var selectedWindow: WindowInfo?
     @State private var showingTestResults = false
@@ -100,6 +101,13 @@ struct WindowDetectionTestView: View {
             .padding()
             .navigationTitle("Window Detection")
             .frame(minWidth: 600, minHeight: 500)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                }
+            }
             .onAppear {
                 Task {
                     await windowManager.refreshWindows()
