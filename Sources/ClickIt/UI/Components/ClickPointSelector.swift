@@ -184,8 +184,7 @@ struct ClickPointSelector: View {
         let screenFrame = NSScreen.main?.frame ?? CGRect.zero
         
         // Check if point is within screen bounds
-        if point.x < 0 || point.x > screenFrame.width || 
-           point.y < 0 || point.y > screenFrame.height {
+        if !screenFrame.contains(point) {
             validationError = "Coordinates must be within screen bounds (0,0) to (\(Int(screenFrame.width)),\(Int(screenFrame.height)))"
             return false
         }
