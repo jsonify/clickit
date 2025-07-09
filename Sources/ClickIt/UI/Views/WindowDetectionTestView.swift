@@ -108,6 +108,8 @@ struct WindowDetectionTestView: View {
                 TestResultsView()
             }
         }
+        .frame(minWidth: 600, minHeight: 500)
+        .frame(idealWidth: 800, idealHeight: 600)
     }
 }
 

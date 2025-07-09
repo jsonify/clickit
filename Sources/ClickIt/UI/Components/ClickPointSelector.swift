@@ -48,7 +48,13 @@ struct ClickPointSelector: View {
             // Selection methods
             VStack(spacing: 12) {
                 // Click-to-set button
-                Button(action: startClickSelection) {
+                Button {
+                    if isSelecting {
+                        cancelClickSelection()
+                    } else {
+                        startClickSelection()
+                    }
+                } label: {
                     HStack {
                         Image(systemName: isSelecting ? "stop.circle.fill" : "hand.tap.fill")
                         Text(isSelecting ? "Cancel Selection" : "Click to Set Point")
@@ -57,10 +63,11 @@ struct ClickPointSelector: View {
                 }
                 .buttonStyle(.bordered)
                 .controlSize(.large)
-                .disabled(isSelecting)
                 
                 // Manual input toggle
-                Button(action: { showingManualInput.toggle() }) {
+                Button {
+                    showingManualInput.toggle()
+                } label: {
                     HStack {
                         Image(systemName: "keyboard")
                         Text(showingManualInput ? "Hide Manual Input" : "Manual Input")
@@ -146,21 +153,14 @@ struct ClickPointSelector: View {
         isSelecting = true
         clearValidationError()
         
-        // Start global mouse click monitoring
-        Task { @MainActor in
-            ClickCoordinateCapture.captureNextClick { point in
-                self.handleCapturedPoint(point)
-            }
-        }
+        // Simplified coordinate capture - will implement proper version later
+        validationError = "Click capture temporarily disabled - use manual input"
+        isSelecting = false
     }
     
-    private func handleCapturedPoint(_ point: CGPoint) {
+    private func cancelClickSelection() {
         isSelecting = false
-        
-        if validateCoordinates(point) {
-            selectedPoint = point
-            onPointSelected(point)
-        }
+        clearValidationError()
     }
     
     private func setManualPoint() {
@@ -195,35 +195,6 @@ struct ClickPointSelector: View {
     
     private func clearValidationError() {
         validationError = nil
-    }
-}
-
-// MARK: - Click Coordinate Capture
-struct ClickCoordinateCapture {
-    @MainActor
-    static func captureNextClick(completion: @escaping @MainActor (CGPoint) -> Void) {
-        // Create global event monitor for left mouse clicks
-        var eventMonitor: Any?
-        
-        eventMonitor = NSEvent.addGlobalMonitorForEvents(matching: .leftMouseDown) { event in
-            let screenPoint = NSEvent.mouseLocation
-            
-            // Convert to screen coordinates
-            let convertedPoint = CGPoint(
-                x: screenPoint.x,
-                y: NSScreen.main?.frame.height ?? 0 - screenPoint.y
-            )
-            
-            // Clean up monitor
-            if let monitor = eventMonitor {
-                NSEvent.removeMonitor(monitor)
-            }
-            
-            // Call completion on main thread
-            Task { @MainActor in
-                completion(convertedPoint)
-            }
-        }
     }
 }
 
