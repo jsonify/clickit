@@ -35,3 +35,4 @@ fastlane/test_output
 *.gcda
 *.gcno
 .vscode/launch.json
+dist/
