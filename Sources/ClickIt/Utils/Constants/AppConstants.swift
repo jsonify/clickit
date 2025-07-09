@@ -35,6 +35,16 @@ struct AppConstants {
     // Minimum System Requirements
     static let minimumOSVersion = "macOS 15.0"
     
+    // Click Engine Configuration
+    static let maxClickTimingDeviation: TimeInterval = 0.005 // 5ms
+    static let maxClickPositionDeviation: CGFloat = 1.0 // 1 pixel
+    static let defaultClickDelay: TimeInterval = 0.01 // 10ms
+    static let defaultClickInterval: TimeInterval = 1.0 // 1 second
+    
+    // Performance Limits
+    static let maxClicksPerSecond: Double = 100.0
+    static let maxConcurrentClicks: Int = 10
+    
     // Private initializer to prevent instantiation
     private init() {}
 }
