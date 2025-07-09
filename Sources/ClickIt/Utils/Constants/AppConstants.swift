@@ -21,6 +21,13 @@ struct AppConstants {
         "Screen Recording"
     ]
     
+    // Permission URLs
+    static let accessibilitySettingsURL = "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"
+    static let screenRecordingSettingsURL = "x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture"
+    
+    // Permission Monitoring
+    static let permissionCheckInterval: TimeInterval = 1.0
+    
     // App Info
     static let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0"
     static let buildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"

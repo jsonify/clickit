@@ -1,6 +1,9 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject private var permissionManager = PermissionManager.shared
+    @State private var showingPermissionSetup = false
+    
     var body: some View {
         VStack(spacing: 24) {
             // App Icon Placeholder
@@ -17,6 +20,44 @@ struct ContentView: View {
             Text("Precision Auto-Clicker for macOS")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
+            
+            // Permission Status
+            VStack(spacing: 12) {
+                if permissionManager.allPermissionsGranted {
+                    HStack(spacing: 8) {
+                        Image(systemName: "checkmark.shield.fill")
+                            .foregroundColor(.green)
+                        Text("Ready to use")
+                            .font(.headline)
+                            .foregroundColor(.green)
+                    }
+                    .padding()
+                    .background(Color.green.opacity(0.1))
+                    .cornerRadius(8)
+                } else {
+                    VStack(spacing: 8) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "exclamationmark.shield")
+                                .foregroundColor(.orange)
+                            Text("Permissions Required")
+                                .font(.headline)
+                                .foregroundColor(.orange)
+                        }
+                        
+                        Button("Setup Permissions") {
+                            showingPermissionSetup = true
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .controlSize(.large)
+                    }
+                    .padding()
+                    .background(Color.orange.opacity(0.1))
+                    .cornerRadius(8)
+                }
+                
+                // Compact permission status
+                CompactPermissionStatus()
+            }
             
             Spacer()
             
@@ -36,9 +77,15 @@ struct ContentView: View {
                 .font(.caption2)
                 .foregroundColor(.secondary)
         }
-        .frame(width: 300, height: 400)
+        .frame(width: 350, height: 500)
         .padding()
         .background(Color(NSColor.windowBackgroundColor))
+        .onAppear {
+            permissionManager.updatePermissionStatus()
+        }
+        .sheet(isPresented: $showingPermissionSetup) {
+            PermissionRequestView()
+        }
     }
 }
 
