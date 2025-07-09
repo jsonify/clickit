@@ -99,6 +99,7 @@ struct WindowDetectionTestView: View {
             }
             .padding()
             .navigationTitle("Window Detection")
+            .frame(minWidth: 600, minHeight: 500)
             .onAppear {
                 Task {
                     await windowManager.refreshWindows()
@@ -190,6 +191,7 @@ struct TestResultsView: View {
                 Spacer()
             }
             .navigationTitle("Test Results")
+            .frame(minWidth: 600, minHeight: 400)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") {
