@@ -3,6 +3,7 @@ import SwiftUI
 struct ContentView: View {
     @EnvironmentObject private var permissionManager: PermissionManager
     @State private var showingPermissionSetup = false
+    @State private var showingWindowDetectionTest = false
     
     var body: some View {
         VStack(spacing: 24) {
@@ -59,6 +60,23 @@ struct ContentView: View {
                 CompactPermissionStatus()
             }
             
+            // Development Tools (only show when permissions are granted)
+            if permissionManager.allPermissionsGranted {
+                VStack(spacing: 12) {
+                    Text("Development Tools")
+                        .font(.headline)
+                    
+                    Button("Test Window Detection") {
+                        showingWindowDetectionTest = true
+                    }
+                    .buttonStyle(.bordered)
+                    .controlSize(.regular)
+                }
+                .padding()
+                .background(Color.blue.opacity(0.1))
+                .cornerRadius(8)
+            }
+            
             Spacer()
             
             // Version Info
@@ -85,6 +103,9 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showingPermissionSetup) {
             PermissionRequestView()
+        }
+        .sheet(isPresented: $showingWindowDetectionTest) {
+            WindowDetectionTestView()
         }
     }
 }
