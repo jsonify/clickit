@@ -174,6 +174,7 @@ enum WindowError: Error, LocalizedError {
     case detectionFailed(String)
     case invalidWindowData(String)
     case windowNotFound(CGWindowID)
+    case processNotFound(pid_t)
     case permissionDenied
     case unknown(String)
     
@@ -185,6 +186,8 @@ enum WindowError: Error, LocalizedError {
             return "Invalid window data: \(message)"
         case .windowNotFound(let id):
             return "Window not found: \(id)"
+        case .processNotFound(let pid):
+            return "Process not found: \(pid)"
         case .permissionDenied:
             return "Permission denied for window access"
         case .unknown(let message):
@@ -200,6 +203,8 @@ enum WindowError: Error, LocalizedError {
             return "The window data is corrupted. Try refreshing the window list"
         case .windowNotFound:
             return "The window may have been closed. Refresh the window list"
+        case .processNotFound:
+            return "The target application may have been closed. Select a new target"
         case .permissionDenied:
             return "Grant Screen Recording permission in System Settings"
         case .unknown:

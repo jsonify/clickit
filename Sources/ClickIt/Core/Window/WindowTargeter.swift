@@ -49,7 +49,7 @@ class WindowTargeter: ObservableObject {
     func validateCurrentTarget() async -> Bool {
         guard let target = currentTarget else {
             isTargetValid = false
-            lastValidationError = WindowError.windowNotFound(0)
+            lastValidationError = WindowError.windowNotFound(kCGNullWindowID)
             return false
         }
         
@@ -170,7 +170,7 @@ class WindowTargeter: ObservableObject {
         // First, check if the process is still running
         let runningApps = NSWorkspace.shared.runningApplications
         guard runningApps.contains(where: { $0.processIdentifier == config.processID }) else {
-            throw WindowError.windowNotFound(config.windowID)
+            throw WindowError.processNotFound(config.processID)
         }
         
         // Then check if the window still exists
