@@ -57,7 +57,6 @@ struct ClickPointSelector: View {
                 }
                 .buttonStyle(.bordered)
                 .controlSize(.large)
-                .disabled(isSelecting)
                 
                 // Manual input toggle
                 Button(action: { showingManualInput.toggle() }) {
@@ -129,6 +128,10 @@ struct ClickPointSelector: View {
                     .font(.caption2)
                     .foregroundColor(.secondary)
                 
+                Text("• Press ESC or click 'Cancel Selection' to cancel")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+                
                 Text("• Or use manual input for precise coordinates")
                     .font(.caption2)
                     .foregroundColor(.secondary)
@@ -143,25 +146,32 @@ struct ClickPointSelector: View {
     }
     
     private func startClickSelection() {
+        if isSelecting {
+            // Cancel current selection
+            ClickCoordinateCapture.shared.stopCapture()
+            isSelecting = false
+            return
+        }
+        
         isSelecting = true
         clearValidationError()
         
         // Start global mouse click monitoring
-        Task { @MainActor in
-            ClickCoordinateCapture.captureNextClick { point in
-                self.handleCapturedPoint(point)
+        ClickCoordinateCapture.shared.startCapture { point in
+            Task { @MainActor in
+                isSelecting = false
+                
+                if let point = point {
+                    if validateCoordinates(point) {
+                        selectedPoint = point
+                        onPointSelected(point)
+                    }
+                }
+                // If point is nil, it means capture was cancelled (ESC key)
             }
         }
     }
     
-    private func handleCapturedPoint(_ point: CGPoint) {
-        isSelecting = false
-        
-        if validateCoordinates(point) {
-            selectedPoint = point
-            onPointSelected(point)
-        }
-    }
     
     private func setManualPoint() {
         clearValidationError()
@@ -199,31 +209,78 @@ struct ClickPointSelector: View {
 }
 
 // MARK: - Click Coordinate Capture
-struct ClickCoordinateCapture {
-    @MainActor
-    static func captureNextClick(completion: @escaping @MainActor (CGPoint) -> Void) {
-        // Create global event monitor for left mouse clicks
-        var eventMonitor: Any?
+@MainActor
+class ClickCoordinateCapture: ObservableObject {
+    private var mouseMonitor: Any?
+    private var keyMonitor: Any?
+    private var completion: ((CGPoint?) -> Void)?
+    
+    static let shared = ClickCoordinateCapture()
+    
+    private init() {}
+    
+    func startCapture(completion: @escaping @MainActor (CGPoint?) -> Void) {
+        // Clean up any existing monitors
+        stopCapture()
         
-        eventMonitor = NSEvent.addGlobalMonitorForEvents(matching: .leftMouseDown) { event in
+        self.completion = completion
+        
+        // Monitor for mouse clicks
+        mouseMonitor = NSEvent.addGlobalMonitorForEvents(matching: .leftMouseDown) { [weak self] event in
+            guard let self = self else { return }
+            
             let screenPoint = NSEvent.mouseLocation
+            let convertedPoint = self.convertScreenCoordinates(screenPoint)
             
-            // Convert to screen coordinates
-            let convertedPoint = CGPoint(
-                x: screenPoint.x,
-                y: NSScreen.main?.frame.height ?? 0 - screenPoint.y
-            )
+            // Clean up and call completion
+            self.finishCapture(with: convertedPoint)
+        }
+        
+        // Monitor for ESC key to cancel
+        keyMonitor = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            guard let self = self else { return }
             
-            // Clean up monitor
-            if let monitor = eventMonitor {
-                NSEvent.removeMonitor(monitor)
-            }
-            
-            // Call completion on main thread
-            Task { @MainActor in
-                completion(convertedPoint)
+            // Check if ESC key was pressed (keyCode 53)
+            if event.keyCode == 53 {
+                self.finishCapture(with: nil)
             }
         }
+    }
+    
+    func stopCapture() {
+        if let monitor = mouseMonitor {
+            NSEvent.removeMonitor(monitor)
+            mouseMonitor = nil
+        }
+        
+        if let monitor = keyMonitor {
+            NSEvent.removeMonitor(monitor)
+            keyMonitor = nil
+        }
+        
+        completion = nil
+    }
+    
+    private func finishCapture(with point: CGPoint?) {
+        let savedCompletion = completion
+        stopCapture()
+        
+        Task { @MainActor in
+            savedCompletion?(point)
+        }
+    }
+    
+    private func convertScreenCoordinates(_ screenPoint: CGPoint) -> CGPoint {
+        guard let mainScreen = NSScreen.main else {
+            return screenPoint
+        }
+        
+        // Convert from macOS screen coordinates (origin at bottom-left) 
+        // to standard coordinates (origin at top-left)
+        return CGPoint(
+            x: screenPoint.x,
+            y: mainScreen.frame.height - screenPoint.y
+        )
     }
 }
 
