@@ -39,9 +39,7 @@ echo "📱 Building for architectures: ${ARCH_LIST[*]}"
 BINARY_PATHS=()
 for arch in "${ARCH_LIST[@]}"; do
     echo "⚙️  Building for $arch..."
-    swift build -c "$BUILD_MODE" --arch "$arch"
-    
-    if [ $? -ne 0 ]; then
+    if ! swift build -c "$BUILD_MODE" --arch "$arch"; then
         echo "❌ Build failed for $arch"
         exit 1
     fi
