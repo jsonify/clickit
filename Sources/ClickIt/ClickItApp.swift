@@ -7,10 +7,10 @@ struct ClickItApp: App {
     @StateObject private var windowManager = WindowManager.shared
     
     init() {
-        // Force app to appear in foreground when launched from command line
+        // Set app activation policy without forcing foreground
         DispatchQueue.main.async {
             NSApp.setActivationPolicy(.regular)
-            NSApp.activate(ignoringOtherApps: true)
+            // Removed: NSApp.activate(ignoringOtherApps: true) - causes conflicts with system dialogs
         }
     }
     
@@ -21,10 +21,10 @@ struct ClickItApp: App {
                 .environmentObject(clickCoordinator)
                 .environmentObject(windowManager)
                 .onAppear {
-                    // Additional window activation
+                    // Gentle window activation that doesn't interfere with system dialogs
                     if let window = NSApp.windows.first {
                         window.makeKeyAndOrderFront(nil)
-                        window.orderFrontRegardless()
+                        // Removed: window.orderFrontRegardless() - causes conflicts with system dialogs
                     }
                 }
         }
