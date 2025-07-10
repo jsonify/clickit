@@ -35,6 +35,71 @@ A lightweight, native macOS auto-clicker application with precision timing and a
 
 This project is organized into milestones tracking the development progress. Check the Issues tab for current development tasks and project roadmap.
 
+### Building from Source
+
+#### Prerequisites
+- Xcode 15.0 or later
+- Swift 5.9 or later
+- macOS 15.0 or later
+
+#### Quick Start
+```bash
+# Clone the repository
+git clone https://github.com/jsonify/clickit.git
+cd clickit
+
+# Build and run for development
+swift run
+
+# Or build the app bundle
+./build_app.sh
+```
+
+#### Build Commands
+
+**Development Build:**
+```bash
+# Build for current architecture (debug)
+swift build
+
+# Run directly
+swift run
+```
+
+**Distribution Build:**
+```bash
+# Create universal app bundle (Intel + Apple Silicon)
+./build_app.sh
+
+# Create debug app bundle
+./build_app.sh debug
+
+# Launch the built app
+open dist/ClickIt.app
+```
+
+#### Build Output Structure
+- `dist/ClickIt.app` - Final app bundle
+- `dist/binaries/` - Individual architecture binaries
+- `dist/build-info.txt` - Build metadata
+- `.build/` - Swift Package Manager build cache
+
+#### Universal Binary Support
+The build system automatically detects available architectures and creates universal binaries when possible:
+- **Intel x64**: `x86_64-apple-macosx`
+- **Apple Silicon**: `arm64-apple-macosx`
+- **Universal**: Combined binary supporting both architectures
+
+#### Testing
+```bash
+# Run unit tests
+swift test
+
+# Build and test specific configuration
+swift build -c release
+swift test -c release
+```
+
 ## Contributing
 
 Contributions are welcome! Please read our contributing guidelines and check the Issues tab for open tasks.
