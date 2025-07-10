@@ -40,6 +40,8 @@ struct AppConstants {
     static let maxClickPositionDeviation: CGFloat = 1.0 // 1 pixel
     static let defaultClickDelay: TimeInterval = 0.01 // 10ms
     static let defaultClickInterval: TimeInterval = 1.0 // 1 second
+    static let minClickInterval: TimeInterval = 0.001 // 1ms minimum
+    static let maxClickInterval: TimeInterval = 60.0 // 60 seconds maximum
     
     // Performance Limits
     static let maxClicksPerSecond: Double = 100.0

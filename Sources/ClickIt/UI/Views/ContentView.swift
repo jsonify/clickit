@@ -2,6 +2,8 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject private var permissionManager: PermissionManager
+    @StateObject private var clickCoordinator = ClickCoordinator.shared
+    @StateObject private var windowManager = WindowManager.shared
     @State private var showingPermissionSetup = false
     @State private var showingWindowDetectionTest = false
     @State private var selectedClickPoint: CGPoint?
@@ -68,6 +70,11 @@ struct ContentView: View {
                         selectedClickPoint = point
                     }
                     
+                    // Configuration Panel
+                    ConfigurationPanel(selectedClickPoint: selectedClickPoint)
+                        .environmentObject(clickCoordinator)
+                        .environmentObject(windowManager)
+                    
                     // Development Tools
                     VStack(spacing: 10) {
                         Text("Development Tools")
@@ -112,7 +119,7 @@ struct ContentView: View {
             }
             .padding()
         }
-        .frame(width: 450, height: 700)
+        .frame(width: 450, height: 900)
         .background(Color(NSColor.windowBackgroundColor))
         .onAppear {
             permissionManager.updatePermissionStatus()
