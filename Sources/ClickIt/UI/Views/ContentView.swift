@@ -2,8 +2,8 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject private var permissionManager: PermissionManager
-    @StateObject private var clickCoordinator = ClickCoordinator.shared
-    @StateObject private var windowManager = WindowManager.shared
+    @EnvironmentObject private var clickCoordinator: ClickCoordinator
+    @EnvironmentObject private var windowManager: WindowManager
     @State private var showingPermissionSetup = false
     @State private var showingWindowDetectionTest = false
     @State private var selectedClickPoint: CGPoint?
@@ -72,8 +72,6 @@ struct ContentView: View {
                     
                     // Configuration Panel
                     ConfigurationPanel(selectedClickPoint: selectedClickPoint)
-                        .environmentObject(clickCoordinator)
-                        .environmentObject(windowManager)
                     
                     // Development Tools
                     VStack(spacing: 10) {
@@ -141,7 +139,7 @@ struct ContentView: View {
                 delayBetweenDownUp: 0.01
             )
             
-            let result = await ClickCoordinator.shared.performSingleClick(configuration: configuration)
+            let result = await clickCoordinator.performSingleClick(configuration: configuration)
             
             print("Click test result: \(result)")
         }
@@ -151,4 +149,6 @@ struct ContentView: View {
 #Preview {
     ContentView()
         .environmentObject(PermissionManager.shared)
+        .environmentObject(ClickCoordinator.shared)
+        .environmentObject(WindowManager.shared)
 }

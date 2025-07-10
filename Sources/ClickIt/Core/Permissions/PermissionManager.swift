@@ -15,6 +15,7 @@ class PermissionManager: ObservableObject {
         updatePermissionStatus()
     }
     
+    
     // MARK: - Permission Status Checking
     
     nonisolated func checkAccessibilityPermission() -> Bool {
@@ -33,27 +34,19 @@ class PermissionManager: ObservableObject {
         let accessibility = checkAccessibilityPermission()
         let screenRecording = checkScreenRecordingPermission()
         
-        DispatchQueue.main.async { [weak self] in
-            self?.accessibilityPermissionGranted = accessibility
-            self?.screenRecordingPermissionGranted = screenRecording
-            self?.allPermissionsGranted = accessibility && screenRecording
-        }
+        // Already on MainActor, no need for DispatchQueue.main.async
+        self.accessibilityPermissionGranted = accessibility
+        self.screenRecordingPermissionGranted = screenRecording
+        self.allPermissionsGranted = accessibility && screenRecording
     }
     
     // MARK: - Permission Requesting
     
     func requestAccessibilityPermission() async -> Bool {
-        // For the request, we need to trigger the system dialog
-        // We'll use a simple approach that works with concurrency
-        let granted = await withCheckedContinuation { continuation in
-            DispatchQueue.main.async {
-                // This triggers the system permission dialog
-                let accessibilityDialogKey = "AXTrustedCheckOptionPrompt"
-                let options = [accessibilityDialogKey: true] as CFDictionary
-                let result = AXIsProcessTrustedWithOptions(options)
-                continuation.resume(returning: result)
-            }
-        }
+        // This triggers the system permission dialog
+        let accessibilityDialogKey = "AXTrustedCheckOptionPrompt"
+        let options = [accessibilityDialogKey: true] as CFDictionary
+        let granted = AXIsProcessTrustedWithOptions(options)
         
         self.accessibilityPermissionGranted = granted
         self.updateAllPermissionsStatus()
@@ -68,8 +61,13 @@ class PermissionManager: ObservableObject {
             return true 
         }
         
-        // Request screen recording permission
-        let granted = CGRequestScreenCaptureAccess()
+        // Request screen recording permission asynchronously to avoid blocking the UI
+        let granted = await withCheckedContinuation { continuation in
+            DispatchQueue.global(qos: .userInitiated).async {
+                let result = CGRequestScreenCaptureAccess()
+                continuation.resume(returning: result)
+            }
+        }
         
         self.screenRecordingPermissionGranted = granted
         self.updateAllPermissionsStatus()
@@ -78,8 +76,17 @@ class PermissionManager: ObservableObject {
     }
     
     func requestAllPermissions() async -> Bool {
+        // Request accessibility permission first
         let accessibilityGranted = await requestAccessibilityPermission()
+        
+        // Give a brief moment for the system dialog to be handled
+        try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+        
+        // Request screen recording permission
         let screenRecordingGranted = await requestScreenRecordingPermission()
+        
+        // Update the final status
+        updatePermissionStatus()
         
         return accessibilityGranted && screenRecordingGranted
     }
@@ -108,12 +115,22 @@ class PermissionManager: ObservableObject {
         NSWorkspace.shared.open(url)
     }
     
+    private var monitoringTimer: Timer?
+    
     func startPermissionMonitoring() {
-        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+        // Prevent multiple timers
+        stopPermissionMonitoring()
+        
+        monitoringTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             Task { @MainActor in
                 self?.updatePermissionStatus()
             }
         }
+    }
+    
+    func stopPermissionMonitoring() {
+        monitoringTimer?.invalidate()
+        monitoringTimer = nil
     }
     
     func getPermissionDescription(for permission: PermissionType) -> String {

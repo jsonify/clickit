@@ -2,12 +2,12 @@ import SwiftUI
 
 struct PermissionRequestView: View {
     @EnvironmentObject private var permissionManager: PermissionManager
-    @ObservedObject private var statusChecker = PermissionStatusChecker.shared
     @Environment(\.dismiss) private var dismiss
     @State private var showingDetailedInstructions = false
     @State private var selectedPermission: PermissionType?
     @State private var isRequestingPermissions = false
     @State private var showingRetryOptions = false
+    @State private var lastStatusUpdate = Date()
     
     var body: some View {
         VStack(spacing: 24) {
@@ -87,7 +87,7 @@ struct PermissionRequestView: View {
                         .font(.caption)
                         .foregroundColor(.secondary)
                     
-                    Text("Last checked: \(statusChecker.lastStatusUpdate.formatted(.dateTime.hour().minute().second()))")
+                    Text("Last checked: \(lastStatusUpdate, formatter: timeFormatter)")
                         .font(.caption2)
                         .foregroundColor(.secondary)
                 }
@@ -97,11 +97,12 @@ struct PermissionRequestView: View {
         .padding()
         .frame(maxWidth: 500)
         .onAppear {
-            statusChecker.startMonitoring()
+            permissionManager.startPermissionMonitoring()
             permissionManager.updatePermissionStatus()
+            updateLastStatusTime()
         }
         .onDisappear {
-            statusChecker.stopMonitoring()
+            permissionManager.stopPermissionMonitoring()
         }
         .sheet(isPresented: $showingDetailedInstructions) {
             PermissionInstructionsView(permission: selectedPermission)
@@ -130,11 +131,18 @@ struct PermissionRequestView: View {
         return "\(granted) of 2 permissions granted"
     }
     
+    private var timeFormatter: DateFormatter {
+        let formatter = DateFormatter()
+        formatter.timeStyle = .medium
+        return formatter
+    }
+    
     // MARK: - Actions
     
     private func requestAccessibilityPermission() async {
         isRequestingPermissions = true
         _ = await permissionManager.requestAccessibilityPermission()
+        updateLastStatusTime()
         isRequestingPermissions = false
         
         if !permissionManager.accessibilityPermissionGranted {
@@ -145,6 +153,7 @@ struct PermissionRequestView: View {
     private func requestScreenRecordingPermission() async {
         isRequestingPermissions = true
         _ = await permissionManager.requestScreenRecordingPermission()
+        updateLastStatusTime()
         isRequestingPermissions = false
         
         if !permissionManager.screenRecordingPermissionGranted {
@@ -155,6 +164,7 @@ struct PermissionRequestView: View {
     private func requestAllPermissions() async {
         isRequestingPermissions = true
         _ = await permissionManager.requestAllPermissions()
+        updateLastStatusTime()
         isRequestingPermissions = false
         
         if !permissionManager.allPermissionsGranted {
@@ -164,12 +174,17 @@ struct PermissionRequestView: View {
     
     private func retryPermissionCheck() {
         permissionManager.updatePermissionStatus()
+        updateLastStatusTime()
         showingRetryOptions = false
     }
     
     private func showInstructions(for permission: PermissionType) {
         selectedPermission = permission
         showingDetailedInstructions = true
+    }
+    
+    private func updateLastStatusTime() {
+        lastStatusUpdate = Date()
     }
 }
 

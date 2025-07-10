@@ -3,6 +3,8 @@ import SwiftUI
 @main
 struct ClickItApp: App {
     @StateObject private var permissionManager = PermissionManager.shared
+    @StateObject private var clickCoordinator = ClickCoordinator.shared
+    @StateObject private var windowManager = WindowManager.shared
     
     init() {
         // Force app to appear in foreground when launched from command line
@@ -16,6 +18,8 @@ struct ClickItApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(permissionManager)
+                .environmentObject(clickCoordinator)
+                .environmentObject(windowManager)
                 .onAppear {
                     // Additional window activation
                     if let window = NSApp.windows.first {
