@@ -97,12 +97,8 @@ struct PermissionRequestView: View {
         .padding()
         .frame(maxWidth: 500)
         .onAppear {
-            permissionManager.startPermissionMonitoring()
-            permissionManager.updatePermissionStatus()
+            permissionManager.refreshPermissionStatus()
             updateLastStatusTime()
-        }
-        .onDisappear {
-            permissionManager.stopPermissionMonitoring()
         }
         .sheet(isPresented: $showingDetailedInstructions) {
             PermissionInstructionsView(permission: selectedPermission)
@@ -173,7 +169,7 @@ struct PermissionRequestView: View {
     }
     
     private func retryPermissionCheck() {
-        permissionManager.updatePermissionStatus()
+        permissionManager.refreshPermissionStatus()
         updateLastStatusTime()
         showingRetryOptions = false
     }

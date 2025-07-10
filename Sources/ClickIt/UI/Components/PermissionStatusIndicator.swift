@@ -31,10 +31,7 @@ struct PermissionStatusIndicator: View {
         .background(backgroundColor)
         .cornerRadius(6)
         .onAppear {
-            permissionManager.startPermissionMonitoring()
-        }
-        .onDisappear {
-            permissionManager.stopPermissionMonitoring()
+            permissionManager.refreshPermissionStatus()
         }
         .sheet(isPresented: $showingPermissionView) {
             PermissionRequestView()

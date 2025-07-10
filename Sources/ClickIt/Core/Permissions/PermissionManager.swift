@@ -10,9 +10,25 @@ class PermissionManager: ObservableObject {
     @Published var accessibilityPermissionGranted: Bool = false
     @Published var screenRecordingPermissionGranted: Bool = false
     @Published var allPermissionsGranted: Bool = false
+    @Published var isSystemDialogActive: Bool = false
+    
+    // App lifecycle management
+    nonisolated(unsafe) private var willResignActiveObserver: NSObjectProtocol?
+    nonisolated(unsafe) private var didBecomeActiveObserver: NSObjectProtocol?
     
     private init() {
+        setupAppLifecycleObservers()
         updatePermissionStatus()
+    }
+    
+    deinit {
+        // Clean up observers synchronously
+        if let observer = willResignActiveObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+        if let observer = didBecomeActiveObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
     }
     
     
@@ -31,26 +47,51 @@ class PermissionManager: ObservableObject {
     }
     
     func updatePermissionStatus() {
+        // Don't update during system dialogs to prevent crashes
+        guard !isSystemDialogActive else { 
+            print("PermissionManager: Skipping status update during system dialog")
+            return 
+        }
+        
         let accessibility = checkAccessibilityPermission()
         let screenRecording = checkScreenRecordingPermission()
         
-        // Already on MainActor, no need for DispatchQueue.main.async
+        // Update properties directly (already on MainActor)
         self.accessibilityPermissionGranted = accessibility
         self.screenRecordingPermissionGranted = screenRecording
         self.allPermissionsGranted = accessibility && screenRecording
+        
+        print("PermissionManager: Status updated - Accessibility: \(accessibility), Screen Recording: \(screenRecording)")
     }
     
     // MARK: - Permission Requesting
     
     func requestAccessibilityPermission() async -> Bool {
+        print("PermissionManager: Requesting accessibility permission")
+        
+        // Mark dialog as active to prevent conflicts
+        isSystemDialogActive = true
+        
         // This triggers the system permission dialog
         let accessibilityDialogKey = "AXTrustedCheckOptionPrompt"
         let options = [accessibilityDialogKey: true] as CFDictionary
-        let granted = AXIsProcessTrustedWithOptions(options)
         
-        self.accessibilityPermissionGranted = granted
-        self.updateAllPermissionsStatus()
+        // The initial call will return false but show the dialog
+        let _ = AXIsProcessTrustedWithOptions(options)
         
+        // Wait for user to potentially grant permission
+        try? await Task.sleep(nanoseconds: 1_000_000_000) // 1 second
+        
+        // Check the actual permission status after dialog
+        let granted = checkAccessibilityPermission()
+        
+        // Mark dialog as no longer active
+        isSystemDialogActive = false
+        
+        // Update status safely
+        updatePermissionStatus()
+        
+        print("PermissionManager: Accessibility permission request completed - granted: \(granted)")
         return granted
     }
     
@@ -61,6 +102,11 @@ class PermissionManager: ObservableObject {
             return true 
         }
         
+        print("PermissionManager: Requesting screen recording permission")
+        
+        // Mark dialog as active to prevent conflicts
+        isSystemDialogActive = true
+        
         // Request screen recording permission asynchronously to avoid blocking the UI
         let granted = await withCheckedContinuation { continuation in
             DispatchQueue.global(qos: .userInitiated).async {
@@ -69,9 +115,13 @@ class PermissionManager: ObservableObject {
             }
         }
         
-        self.screenRecordingPermissionGranted = granted
-        self.updateAllPermissionsStatus()
+        // Mark dialog as no longer active
+        isSystemDialogActive = false
         
+        // Update status safely
+        updatePermissionStatus()
+        
+        print("PermissionManager: Screen recording permission request completed - granted: \(granted)")
         return granted
     }
     
@@ -115,22 +165,67 @@ class PermissionManager: ObservableObject {
         NSWorkspace.shared.open(url)
     }
     
-    private var monitoringTimer: Timer?
+    // MARK: - App Lifecycle Management
     
-    func startPermissionMonitoring() {
-        // Prevent multiple timers
-        stopPermissionMonitoring()
-        
-        monitoringTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+    private func setupAppLifecycleObservers() {
+        // Monitor when app goes to background (during system dialogs)
+        willResignActiveObserver = NotificationCenter.default.addObserver(
+            forName: NSApplication.willResignActiveNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
             Task { @MainActor in
-                self?.updatePermissionStatus()
+                self?.handleAppWillResignActive()
+            }
+        }
+        
+        // Monitor when app returns to foreground (after system dialogs)
+        didBecomeActiveObserver = NotificationCenter.default.addObserver(
+            forName: NSApplication.didBecomeActiveNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in
+                self?.handleAppDidBecomeActive()
             }
         }
     }
     
-    func stopPermissionMonitoring() {
-        monitoringTimer?.invalidate()
-        monitoringTimer = nil
+    private func removeAppLifecycleObservers() {
+        if let observer = willResignActiveObserver {
+            NotificationCenter.default.removeObserver(observer)
+            willResignActiveObserver = nil
+        }
+        
+        if let observer = didBecomeActiveObserver {
+            NotificationCenter.default.removeObserver(observer)
+            didBecomeActiveObserver = nil
+        }
+    }
+    
+    private func handleAppWillResignActive() {
+        print("PermissionManager: App will resign active - pausing permission monitoring")
+        isSystemDialogActive = true
+    }
+    
+    private func handleAppDidBecomeActive() {
+        print("PermissionManager: App did become active - resuming permission monitoring")
+        isSystemDialogActive = false
+        
+        // Safe delay before updating status to ensure app is fully active
+        Task {
+            try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+            updatePermissionStatus()
+        }
+    }
+    
+    // Replace timer-based monitoring with event-driven approach
+    func refreshPermissionStatus() {
+        guard !isSystemDialogActive else { 
+            print("PermissionManager: Refresh requested during system dialog - deferring")
+            return 
+        }
+        updatePermissionStatus()
     }
     
     func getPermissionDescription(for permission: PermissionType) -> String {
