@@ -2,6 +2,7 @@ import SwiftUI
 
 struct PermissionRequestView: View {
     @EnvironmentObject private var permissionManager: PermissionManager
+    @ObservedObject private var statusChecker = PermissionStatusChecker.shared
     @Environment(\.dismiss) private var dismiss
     @State private var showingDetailedInstructions = false
     @State private var selectedPermission: PermissionType?
@@ -97,7 +98,7 @@ struct PermissionRequestView: View {
                         .font(.caption)
                         .foregroundColor(.secondary)
                     
-                    Text("Last checked: \(lastStatusUpdate, formatter: timeFormatter)")
+                    Text("Last checked: \(statusChecker.lastStatusUpdate.formatted(.dateTime.hour().minute().second()))")
                         .font(.caption2)
                         .foregroundColor(.secondary)
                 }
@@ -107,8 +108,11 @@ struct PermissionRequestView: View {
         .padding()
         .frame(maxWidth: 500)
         .onAppear {
+            statusChecker.startMonitoring()
             permissionManager.updatePermissionStatus()
-            updateLastStatusTime()
+        }
+        .onDisappear {
+            statusChecker.stopMonitoring()
         }
         .sheet(isPresented: $showingDetailedInstructions) {
             PermissionInstructionsView(permission: selectedPermission)
@@ -196,7 +200,7 @@ struct PermissionRequestView: View {
     }
     
     private func updateLastStatusTime() {
-        lastStatusUpdate = Date()
+        // Status update time is now handled by statusChecker
     }
 }
 

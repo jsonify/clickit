@@ -2,6 +2,7 @@ import SwiftUI
 
 struct PermissionStatusIndicator: View {
     @EnvironmentObject private var permissionManager: PermissionManager
+    @ObservedObject private var statusChecker = PermissionStatusChecker.shared
     @State private var showingPermissionView = false
     
     var body: some View {
@@ -31,7 +32,10 @@ struct PermissionStatusIndicator: View {
         .background(backgroundColor)
         .cornerRadius(6)
         .onAppear {
-            permissionManager.updatePermissionStatus()
+            statusChecker.startMonitoring()
+        }
+        .onDisappear {
+            statusChecker.stopMonitoring()
         }
         .sheet(isPresented: $showingPermissionView) {
             PermissionRequestView()
@@ -118,64 +122,56 @@ struct PermissionDot: View {
 
 struct PermissionHealthBadge: View {
     @EnvironmentObject private var permissionManager: PermissionManager
+    @ObservedObject private var statusChecker = PermissionStatusChecker.shared
+    @State private var healthReport: PermissionHealthReport?
     
     var body: some View {
-        HStack(spacing: 6) {
-            Image(systemName: healthIcon)
-                .foregroundColor(statusColor)
-                .font(.system(size: 12))
-            
-            Text(statusText)
-                .font(.caption2)
-                .foregroundColor(statusColor)
-            
-            Text("(\(healthPercentage)%)")
-                .font(.caption2)
-                .foregroundColor(.secondary)
+        Group {
+            if let report = healthReport {
+                HStack(spacing: 6) {
+                    Image(systemName: healthIcon(for: report.status))
+                        .foregroundColor(report.statusColor)
+                        .font(.system(size: 12))
+                    
+                    Text(report.statusText)
+                        .font(.caption2)
+                        .foregroundColor(report.statusColor)
+                    
+                    Text("(\(Int(report.healthPercentage))%)")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(report.statusColor.opacity(0.1))
+                .cornerRadius(4)
+            } else {
+                Text("Checking...")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+            }
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 4)
-        .background(statusColor.opacity(0.1))
-        .cornerRadius(4)
+        .onAppear {
+            updateHealthReport()
+        }
+        .onReceive(statusChecker.$lastStatusUpdate) { _ in
+            updateHealthReport()
+        }
     }
     
-    private var healthIcon: String {
-        if permissionManager.allPermissionsGranted {
+    private func updateHealthReport() {
+        healthReport = statusChecker.performHealthCheck()
+    }
+    
+    private func healthIcon(for status: PermissionHealthStatus) -> String {
+        switch status {
+        case .healthy:
             return "checkmark.circle.fill"
-        } else if permissionManager.accessibilityPermissionGranted || permissionManager.screenRecordingPermissionGranted {
+        case .partial:
             return "exclamationmark.triangle.fill"
-        } else {
+        case .unhealthy:
             return "xmark.circle.fill"
         }
-    }
-    
-    private var statusColor: Color {
-        if permissionManager.allPermissionsGranted {
-            return .green
-        } else if permissionManager.accessibilityPermissionGranted || permissionManager.screenRecordingPermissionGranted {
-            return .orange
-        } else {
-            return .red
-        }
-    }
-    
-    private var statusText: String {
-        if permissionManager.allPermissionsGranted {
-            return "Healthy"
-        } else if permissionManager.accessibilityPermissionGranted || permissionManager.screenRecordingPermissionGranted {
-            return "Partial"
-        } else {
-            return "Unhealthy"
-        }
-    }
-    
-    private var healthPercentage: Int {
-        let granted = [
-            permissionManager.accessibilityPermissionGranted,
-            permissionManager.screenRecordingPermissionGranted
-        ].filter { $0 }.count
-        
-        return (granted * 100) / 2
     }
 }
 
