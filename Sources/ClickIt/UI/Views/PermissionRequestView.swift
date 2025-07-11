@@ -32,14 +32,14 @@ struct PermissionRequestView: View {
                 PermissionRow(
                     permission: .accessibility,
                     isGranted: permissionManager.accessibilityPermissionGranted,
-                    onRequestPermission: { await requestAccessibilityPermission() },
+                    onRequestPermission: { requestAccessibilityPermission() },
                     onShowInstructions: { showInstructions(for: .accessibility) }
                 )
                 
                 PermissionRow(
                     permission: .screenRecording,
                     isGranted: permissionManager.screenRecordingPermissionGranted,
-                    onRequestPermission: { await requestScreenRecordingPermission() },
+                    onRequestPermission: { requestScreenRecordingPermission() },
                     onShowInstructions: { showInstructions(for: .screenRecording) }
                 )
             }
@@ -55,14 +55,24 @@ struct PermissionRequestView: View {
                     .buttonStyle(.borderedProminent)
                     .controlSize(.large)
                 } else {
-                    Button("Request All Permissions") {
-                        Task {
-                            await requestAllPermissions()
-                        }
+                    Button("Reset & Request Permissions") {
+                        requestAllPermissions()
                     }
                     .buttonStyle(.borderedProminent)
                     .controlSize(.large)
                     .disabled(isRequestingPermissions)
+                    
+                    HStack(spacing: 12) {
+                        Button("Open System Settings") {
+                            permissionManager.openSystemPreferences()
+                        }
+                        .buttonStyle(.bordered)
+                        
+                        Button("Check Status") {
+                            retryPermissionCheck()
+                        }
+                        .buttonStyle(.bordered)
+                    }
                     
                     if showingRetryOptions {
                         Button("Retry Permission Check") {
@@ -135,9 +145,9 @@ struct PermissionRequestView: View {
     
     // MARK: - Actions
     
-    private func requestAccessibilityPermission() async {
+    private func requestAccessibilityPermission() {
         isRequestingPermissions = true
-        _ = await permissionManager.requestAccessibilityPermission()
+        permissionManager.requestAccessibilityPermission()
         updateLastStatusTime()
         isRequestingPermissions = false
         
@@ -146,9 +156,9 @@ struct PermissionRequestView: View {
         }
     }
     
-    private func requestScreenRecordingPermission() async {
+    private func requestScreenRecordingPermission() {
         isRequestingPermissions = true
-        _ = await permissionManager.requestScreenRecordingPermission()
+        permissionManager.requestScreenRecordingPermission()
         updateLastStatusTime()
         isRequestingPermissions = false
         
@@ -157,9 +167,11 @@ struct PermissionRequestView: View {
         }
     }
     
-    private func requestAllPermissions() async {
+    private func requestAllPermissions() {
         isRequestingPermissions = true
-        _ = await permissionManager.requestAllPermissions()
+        // Use AutoCliq's reset approach
+        permissionManager.resetPermissions()
+        permissionManager.requestScreenRecordingPermission()
         updateLastStatusTime()
         isRequestingPermissions = false
         
@@ -189,7 +201,7 @@ struct PermissionRequestView: View {
 struct PermissionRow: View {
     let permission: PermissionType
     let isGranted: Bool
-    let onRequestPermission: () async -> Void
+    let onRequestPermission: () -> Void
     let onShowInstructions: () -> Void
     
     var body: some View {
@@ -222,9 +234,7 @@ struct PermissionRow: View {
                 // Action Button
                 if !isGranted {
                     Button("Grant") {
-                        Task {
-                            await onRequestPermission()
-                        }
+                        onRequestPermission()
                     }
                     .buttonStyle(.bordered)
                     .controlSize(.small)

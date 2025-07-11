@@ -11,27 +11,48 @@ class PermissionManager: ObservableObject {
     @Published var screenRecordingPermissionGranted: Bool = false
     @Published var allPermissionsGranted: Bool = false
     
-    // App lifecycle management
-    nonisolated(unsafe) private var willResignActiveObserver: NSObjectProtocol?
-    nonisolated(unsafe) private var didBecomeActiveObserver: NSObjectProtocol?
-    
     private init() {
-        setupAppLifecycleObservers()
         updatePermissionStatus()
     }
     
-    deinit {
-        // Clean up observers synchronously
-        if let observer = willResignActiveObserver {
-            NotificationCenter.default.removeObserver(observer)
-        }
-        if let observer = didBecomeActiveObserver {
-            NotificationCenter.default.removeObserver(observer)
-        }
+    
+    // MARK: - Permission Status Checking (AutoCliq's Safe Approach)
+    
+    nonisolated func hasAccessibilityPermission() -> Bool {
+        // Check without prompting first (AutoCliq's approach)
+        let options = ["AXTrustedCheckOptionPrompt": false]
+        let isTrusted = AXIsProcessTrustedWithOptions(options as CFDictionary)
+        
+        // For debugging, let's also try the simple check
+        let simpleTrusted = AXIsProcessTrusted()
+        
+        // Get bundle info for debugging
+        let bundleId = Bundle.main.bundleIdentifier ?? "unknown"
+        let bundlePath = Bundle.main.bundlePath
+        
+        NSLog("PermissionManager: Bundle ID: \(bundleId)")
+        NSLog("PermissionManager: Bundle Path: \(bundlePath)")
+        NSLog("PermissionManager: AXIsProcessTrusted returned: \(isTrusted)")
+        NSLog("PermissionManager: AXIsProcessTrusted (simple) returned: \(simpleTrusted)")
+        
+        // Try to create a test event to verify actual permissions
+        let canCreateEvent = canCreateTestEvent()
+        NSLog("PermissionManager: Can create test event: \(canCreateEvent)")
+        
+        // For now, just return the trusted status since event creation might fail for other reasons
+        return isTrusted
     }
     
-    
-    // MARK: - Permission Status Checking
+    nonisolated private func canCreateTestEvent() -> Bool {
+        // Try to create a test CGEvent to verify we actually have permission
+        let testEvent = CGEvent(mouseEventSource: nil, 
+                               mouseType: .leftMouseDown, 
+                               mouseCursorPosition: CGPoint(x: 0, y: 0), 
+                               mouseButton: .left)
+        let canCreate = testEvent != nil
+        NSLog("PermissionManager: Can create test event: \(canCreate)")
+        return canCreate
+    }
     
     nonisolated func checkAccessibilityPermission() -> Bool {
         return AXIsProcessTrustedWithOptions(nil)
@@ -46,71 +67,41 @@ class PermissionManager: ObservableObject {
     }
     
     func updatePermissionStatus() {
-        let accessibility = checkAccessibilityPermission()
+        let accessibility = hasAccessibilityPermission()
         let screenRecording = checkScreenRecordingPermission()
         
-        // Update properties directly (already on MainActor)
+        // Already on MainActor, no need for DispatchQueue
         self.accessibilityPermissionGranted = accessibility
         self.screenRecordingPermissionGranted = screenRecording
         self.allPermissionsGranted = accessibility && screenRecording
-        
-        print("PermissionManager: Status updated - Accessibility: \(accessibility), Screen Recording: \(screenRecording)")
     }
     
     // MARK: - Permission Requesting
     
-    func requestAccessibilityPermission() async -> Bool {
-        print("PermissionManager: Opening accessibility permission dialog")
-        
-        // Simply trigger the system dialog without trying to manage it
-        let accessibilityDialogKey = "AXTrustedCheckOptionPrompt"
-        let options = [accessibilityDialogKey: true] as CFDictionary
-        
-        // This call shows the system dialog and returns immediately
-        // We don't try to manage the dialog state or wait for completion
-        let _ = AXIsProcessTrustedWithOptions(options)
-        
-        print("PermissionManager: System permission dialog opened - user must complete it manually")
-        
-        // Return current status (will be false until user grants permission)
-        // The UI will update automatically when permissions are actually granted
-        return checkAccessibilityPermission()
+    nonisolated func requestAccessibilityPermission() {
+        // AutoCliq's simple approach - just trigger the dialog
+        let options = ["AXTrustedCheckOptionPrompt": true]
+        _ = AXIsProcessTrustedWithOptions(options as CFDictionary)
     }
     
-    func requestScreenRecordingPermission() async -> Bool {
+    nonisolated func resetPermissions() {
+        // This will force a new permission prompt (AutoCliq's approach)
+        let options = ["AXTrustedCheckOptionPrompt": true]
+        _ = AXIsProcessTrustedWithOptions(options as CFDictionary)
+    }
+    
+    nonisolated func requestScreenRecordingPermission() {
         guard #available(macOS 10.15, *) else { 
-            self.screenRecordingPermissionGranted = true
-            self.updateAllPermissionsStatus()
-            return true 
+            return
         }
         
-        print("PermissionManager: Opening screen recording permission dialog")
-        
-        // Simply trigger the system dialog without trying to manage it
-        // This call shows the system dialog and returns immediately
-        let _ = CGRequestScreenCaptureAccess()
-        
-        print("PermissionManager: System permission dialog opened - user must complete it manually")
-        
-        // Return current status (will be false until user grants permission)
-        // The UI will update automatically when permissions are actually granted
-        return checkScreenRecordingPermission()
+        // Simple approach - just request the permission
+        _ = CGRequestScreenCaptureAccess()
     }
     
-    func requestAllPermissions() async -> Bool {
-        print("PermissionManager: Opening all permission dialogs")
-        
-        // Open accessibility permission dialog
-        let _ = await requestAccessibilityPermission()
-        
-        // Open screen recording permission dialog  
-        let _ = await requestScreenRecordingPermission()
-        
-        print("PermissionManager: All permission dialogs opened - user must complete them manually")
-        
-        // Return current status - will be updated automatically when user grants permissions
-        updatePermissionStatus()
-        return allPermissionsGranted
+    func requestAllPermissions() {
+        requestAccessibilityPermission()
+        requestScreenRecordingPermission()
     }
     
     // MARK: - Utilities
@@ -137,59 +128,22 @@ class PermissionManager: ObservableObject {
         NSWorkspace.shared.open(url)
     }
     
-    // MARK: - App Lifecycle Management
-    
-    private func setupAppLifecycleObservers() {
-        // Monitor when app goes to background (during system dialogs)
-        willResignActiveObserver = NotificationCenter.default.addObserver(
-            forName: NSApplication.willResignActiveNotification,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            Task { @MainActor in
-                self?.handleAppWillResignActive()
-            }
+    nonisolated func openSystemPreferences() {
+        // AutoCliq's approach - Open the Accessibility settings directly
+        if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
+            NSWorkspace.shared.open(url)
         }
-        
-        // Monitor when app returns to foreground (after system dialogs)
-        didBecomeActiveObserver = NotificationCenter.default.addObserver(
-            forName: NSApplication.didBecomeActiveNotification,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
+    }
+    
+    func startPermissionMonitoring() {
+        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             Task { @MainActor in
-                self?.handleAppDidBecomeActive()
+                self?.updatePermissionStatus()
             }
         }
     }
     
-    private func removeAppLifecycleObservers() {
-        if let observer = willResignActiveObserver {
-            NotificationCenter.default.removeObserver(observer)
-            willResignActiveObserver = nil
-        }
-        
-        if let observer = didBecomeActiveObserver {
-            NotificationCenter.default.removeObserver(observer)
-            didBecomeActiveObserver = nil
-        }
-    }
-    
-    private func handleAppWillResignActive() {
-        print("PermissionManager: App will resign active")
-    }
-    
-    private func handleAppDidBecomeActive() {
-        print("PermissionManager: App did become active - refreshing permission status")
-        
-        // Refresh permission status when app becomes active (user might have changed permissions)
-        Task {
-            try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
-            updatePermissionStatus()
-        }
-    }
-    
-    // Event-driven permission status refresh
+    // For backward compatibility with new UI components
     func refreshPermissionStatus() {
         updatePermissionStatus()
     }
