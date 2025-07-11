@@ -64,7 +64,7 @@ struct PermissionRequestView: View {
                     
                     HStack(spacing: 12) {
                         Button("Open System Settings") {
-                            permissionManager.openSystemPreferences()
+                            permissionManager.openSystemSettings(for: .accessibility)
                         }
                         .buttonStyle(.bordered)
                         
@@ -107,7 +107,7 @@ struct PermissionRequestView: View {
         .padding()
         .frame(maxWidth: 500)
         .onAppear {
-            permissionManager.refreshPermissionStatus()
+            permissionManager.updatePermissionStatus()
             updateLastStatusTime()
         }
         .sheet(isPresented: $showingDetailedInstructions) {
@@ -147,41 +147,45 @@ struct PermissionRequestView: View {
     
     private func requestAccessibilityPermission() {
         isRequestingPermissions = true
-        permissionManager.requestAccessibilityPermission()
-        updateLastStatusTime()
-        isRequestingPermissions = false
-        
-        if !permissionManager.accessibilityPermissionGranted {
-            showingRetryOptions = true
+        Task {
+            _ = await permissionManager.requestAccessibilityPermission()
+            updateLastStatusTime()
+            isRequestingPermissions = false
+            
+            if !permissionManager.accessibilityPermissionGranted {
+                showingRetryOptions = true
+            }
         }
     }
     
     private func requestScreenRecordingPermission() {
         isRequestingPermissions = true
-        permissionManager.requestScreenRecordingPermission()
-        updateLastStatusTime()
-        isRequestingPermissions = false
-        
-        if !permissionManager.screenRecordingPermissionGranted {
-            showingRetryOptions = true
+        Task {
+            _ = await permissionManager.requestScreenRecordingPermission()
+            updateLastStatusTime()
+            isRequestingPermissions = false
+            
+            if !permissionManager.screenRecordingPermissionGranted {
+                showingRetryOptions = true
+            }
         }
     }
     
     private func requestAllPermissions() {
         isRequestingPermissions = true
-        // Use AutoCliq's reset approach
-        permissionManager.resetPermissions()
-        permissionManager.requestScreenRecordingPermission()
-        updateLastStatusTime()
-        isRequestingPermissions = false
-        
-        if !permissionManager.allPermissionsGranted {
-            showingRetryOptions = true
+        Task {
+            _ = await permissionManager.requestAllPermissions()
+            updateLastStatusTime()
+            isRequestingPermissions = false
+            
+            if !permissionManager.allPermissionsGranted {
+                showingRetryOptions = true
+            }
         }
     }
     
     private func retryPermissionCheck() {
-        permissionManager.refreshPermissionStatus()
+        permissionManager.updatePermissionStatus()
         updateLastStatusTime()
         showingRetryOptions = false
     }

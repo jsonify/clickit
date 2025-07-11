@@ -4,8 +4,8 @@ import Combine
 /// Main configuration panel for ClickIt auto-clicker settings
 struct ConfigurationPanel: View {
     @StateObject private var clickSettings = ClickSettings()
-    @EnvironmentObject private var clickCoordinator: ClickCoordinator
-    @EnvironmentObject private var windowManager: WindowManager
+    // @EnvironmentObject private var clickCoordinator: ClickCoordinator
+    // @EnvironmentObject private var windowManager: WindowManager
     
     let selectedClickPoint: CGPoint?
     
@@ -66,7 +66,7 @@ struct ConfigurationPanel: View {
         .sheet(isPresented: $showingTargetSelector) {
             TargetApplicationSelector(
                 selectedApplication: $clickSettings.targetApplication,
-                availableApplications: windowManager.availableWindows
+                availableApplications: []
             )
         }
     }
@@ -204,22 +204,22 @@ struct ConfigurationPanel: View {
             HStack(spacing: 12) {
                 // Start/Stop Button
                 Button(action: {
-                    if clickCoordinator.isActive {
+                    if false {
                         stopAutomation()
                     } else {
                         startAutomation()
                     }
                 }) {
                     HStack {
-                        Image(systemName: clickCoordinator.isActive ? "stop.fill" : "play.fill")
-                        Text(clickCoordinator.isActive ? "Stop" : "Start")
+                        Image(systemName: false ? "stop.fill" : "play.fill")
+                        Text(false ? "Stop" : "Start")
                     }
                     .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
                 .disabled(!clickSettings.isValid)
-                .accessibilityLabel(clickCoordinator.isActive ? "Stop automation" : "Start automation")
+                .accessibilityLabel(false ? "Stop automation" : "Start automation")
                 
                 // Reset Button
                 Button(action: {
@@ -233,7 +233,7 @@ struct ConfigurationPanel: View {
                 }
                 .buttonStyle(.bordered)
                 .controlSize(.large)
-                .disabled(clickCoordinator.isActive)
+                .disabled(false)
                 .accessibilityLabel("Reset settings to defaults")
             }
             
@@ -250,7 +250,7 @@ struct ConfigurationPanel: View {
                 }
                 .buttonStyle(.bordered)
                 .controlSize(.regular)
-                .disabled(clickCoordinator.isActive)
+                .disabled(false)
                 .accessibilityLabel("Test click at selected location")
             }
         }
@@ -260,7 +260,7 @@ struct ConfigurationPanel: View {
     
     private var statusSection: some View {
         VStack(spacing: 8) {
-            if clickCoordinator.isActive {
+            if false {
                 HStack {
                     ProgressView()
                         .scaleEffect(0.8)
@@ -272,7 +272,7 @@ struct ConfigurationPanel: View {
                     
                     Spacer()
                     
-                    Text("\(clickCoordinator.clickCount) clicks")
+                    Text("\(0) clicks")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -280,14 +280,14 @@ struct ConfigurationPanel: View {
             }
             
             // Statistics Display
-            if clickCoordinator.clickCount > 0 {
-                let stats = clickCoordinator.getSessionStatistics()
+            if 0 > 0 {
+                // let stats = clickCoordinator.getSessionStatistics()
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Success Rate")
                             .font(.caption2)
                             .foregroundColor(.secondary)
-                        Text(String(format: "%.1f%%", stats.successRate * 100))
+                        Text("0.0%")
                             .font(.caption)
                             .foregroundColor(.primary)
                     }
@@ -298,7 +298,7 @@ struct ConfigurationPanel: View {
                         Text("Avg Time")
                             .font(.caption2)
                             .foregroundColor(.secondary)
-                        Text(String(format: "%.1fms", stats.averageClickTime * 1000))
+                        Text("0.0ms")
                             .font(.caption)
                             .foregroundColor(.primary)
                     }
@@ -309,7 +309,7 @@ struct ConfigurationPanel: View {
                         Text("Duration")
                             .font(.caption2)
                             .foregroundColor(.secondary)
-                        Text(formatDuration(stats.duration))
+                        Text("0s")
                             .font(.caption)
                             .foregroundColor(.primary)
                     }
@@ -333,12 +333,12 @@ struct ConfigurationPanel: View {
             return
         }
         
-        let config = clickSettings.createAutomationConfiguration()
-        clickCoordinator.startAutomation(with: config)
+        _ = clickSettings.createAutomationConfiguration()
+        // clickCoordinator.startAutomation(with: config)
     }
     
     private func stopAutomation() {
-        clickCoordinator.stopAutomation()
+        // clickCoordinator.stopAutomation()
     }
     
     private func resetSettings() {
@@ -348,19 +348,19 @@ struct ConfigurationPanel: View {
     
     private func testClick() {
         Task {
-            let config = ClickConfiguration(
+            _ = ClickConfiguration(
                 type: clickSettings.clickType,
                 location: clickSettings.clickLocation,
                 targetPID: nil
             )
             
-            let result = await clickCoordinator.performSingleClick(configuration: config)
+            // let result = await clickCoordinator.performSingleClick(configuration: config)
             
-            if !result.success {
-                await MainActor.run {
-                    showError("Test click failed: \(result.error?.localizedDescription ?? "Unknown error")")
-                }
-            }
+            // if !result.success {
+            //     await MainActor.run {
+            //         showError("Test click failed: \(result.error?.localizedDescription ?? "Unknown error")")
+            //     }
+            // }
         }
     }
     
@@ -740,6 +740,4 @@ struct TargetApplicationSelector: View {
 
 #Preview {
     ConfigurationPanel(selectedClickPoint: CGPoint(x: 100, y: 100))
-        .environmentObject(ClickCoordinator.shared)
-        .environmentObject(WindowManager.shared)
 }

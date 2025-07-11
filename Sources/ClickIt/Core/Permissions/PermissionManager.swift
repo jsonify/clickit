@@ -15,44 +15,7 @@ class PermissionManager: ObservableObject {
         updatePermissionStatus()
     }
     
-    
-    // MARK: - Permission Status Checking (AutoCliq's Safe Approach)
-    
-    nonisolated func hasAccessibilityPermission() -> Bool {
-        // Check without prompting first (AutoCliq's approach)
-        let options = ["AXTrustedCheckOptionPrompt": false]
-        let isTrusted = AXIsProcessTrustedWithOptions(options as CFDictionary)
-        
-        // For debugging, let's also try the simple check
-        let simpleTrusted = AXIsProcessTrusted()
-        
-        // Get bundle info for debugging
-        let bundleId = Bundle.main.bundleIdentifier ?? "unknown"
-        let bundlePath = Bundle.main.bundlePath
-        
-        NSLog("PermissionManager: Bundle ID: \(bundleId)")
-        NSLog("PermissionManager: Bundle Path: \(bundlePath)")
-        NSLog("PermissionManager: AXIsProcessTrusted returned: \(isTrusted)")
-        NSLog("PermissionManager: AXIsProcessTrusted (simple) returned: \(simpleTrusted)")
-        
-        // Try to create a test event to verify actual permissions
-        let canCreateEvent = canCreateTestEvent()
-        NSLog("PermissionManager: Can create test event: \(canCreateEvent)")
-        
-        // For now, just return the trusted status since event creation might fail for other reasons
-        return isTrusted
-    }
-    
-    nonisolated private func canCreateTestEvent() -> Bool {
-        // Try to create a test CGEvent to verify we actually have permission
-        let testEvent = CGEvent(mouseEventSource: nil, 
-                               mouseType: .leftMouseDown, 
-                               mouseCursorPosition: CGPoint(x: 0, y: 0), 
-                               mouseButton: .left)
-        let canCreate = testEvent != nil
-        NSLog("PermissionManager: Can create test event: \(canCreate)")
-        return canCreate
-    }
+    // MARK: - Permission Status Checking
     
     nonisolated func checkAccessibilityPermission() -> Bool {
         return AXIsProcessTrustedWithOptions(nil)
@@ -67,41 +30,58 @@ class PermissionManager: ObservableObject {
     }
     
     func updatePermissionStatus() {
-        let accessibility = hasAccessibilityPermission()
+        let accessibility = checkAccessibilityPermission()
         let screenRecording = checkScreenRecordingPermission()
         
-        // Already on MainActor, no need for DispatchQueue
-        self.accessibilityPermissionGranted = accessibility
-        self.screenRecordingPermissionGranted = screenRecording
-        self.allPermissionsGranted = accessibility && screenRecording
+        DispatchQueue.main.async { [weak self] in
+            self?.accessibilityPermissionGranted = accessibility
+            self?.screenRecordingPermissionGranted = screenRecording
+            self?.allPermissionsGranted = accessibility && screenRecording
+        }
     }
     
     // MARK: - Permission Requesting
     
-    nonisolated func requestAccessibilityPermission() {
-        // AutoCliq's simple approach - just trigger the dialog
-        let options = ["AXTrustedCheckOptionPrompt": true]
-        _ = AXIsProcessTrustedWithOptions(options as CFDictionary)
-    }
-    
-    nonisolated func resetPermissions() {
-        // This will force a new permission prompt (AutoCliq's approach)
-        let options = ["AXTrustedCheckOptionPrompt": true]
-        _ = AXIsProcessTrustedWithOptions(options as CFDictionary)
-    }
-    
-    nonisolated func requestScreenRecordingPermission() {
-        guard #available(macOS 10.15, *) else { 
-            return
+    func requestAccessibilityPermission() async -> Bool {
+        // For the request, we need to trigger the system dialog
+        // We'll use a simple approach that works with concurrency
+        let granted = await withCheckedContinuation { continuation in
+            DispatchQueue.main.async {
+                // This triggers the system permission dialog
+                let accessibilityDialogKey = "AXTrustedCheckOptionPrompt"
+                let options = [accessibilityDialogKey: true] as CFDictionary
+                let result = AXIsProcessTrustedWithOptions(options)
+                continuation.resume(returning: result)
+            }
         }
         
-        // Simple approach - just request the permission
-        _ = CGRequestScreenCaptureAccess()
+        self.accessibilityPermissionGranted = granted
+        self.updateAllPermissionsStatus()
+        
+        return granted
     }
     
-    func requestAllPermissions() {
-        requestAccessibilityPermission()
-        requestScreenRecordingPermission()
+    func requestScreenRecordingPermission() async -> Bool {
+        guard #available(macOS 10.15, *) else { 
+            self.screenRecordingPermissionGranted = true
+            self.updateAllPermissionsStatus()
+            return true 
+        }
+        
+        // Request screen recording permission
+        let granted = CGRequestScreenCaptureAccess()
+        
+        self.screenRecordingPermissionGranted = granted
+        self.updateAllPermissionsStatus()
+        
+        return granted
+    }
+    
+    func requestAllPermissions() async -> Bool {
+        let accessibilityGranted = await requestAccessibilityPermission()
+        let screenRecordingGranted = await requestScreenRecordingPermission()
+        
+        return accessibilityGranted && screenRecordingGranted
     }
     
     // MARK: - Utilities
@@ -128,24 +108,12 @@ class PermissionManager: ObservableObject {
         NSWorkspace.shared.open(url)
     }
     
-    nonisolated func openSystemPreferences() {
-        // AutoCliq's approach - Open the Accessibility settings directly
-        if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
-            NSWorkspace.shared.open(url)
-        }
-    }
-    
     func startPermissionMonitoring() {
         Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             Task { @MainActor in
                 self?.updatePermissionStatus()
             }
         }
-    }
-    
-    // For backward compatibility with new UI components
-    func refreshPermissionStatus() {
-        updatePermissionStatus()
     }
     
     func getPermissionDescription(for permission: PermissionType) -> String {

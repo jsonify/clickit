@@ -3,15 +3,12 @@ import SwiftUI
 @main
 struct ClickItApp: App {
     @StateObject private var permissionManager = PermissionManager.shared
-    @StateObject private var clickCoordinator = ClickCoordinator.shared
-    @StateObject private var windowManager = WindowManager.shared
-    @State private var permissionCheckTimer: Timer?
     
     init() {
-        // Set app activation policy without forcing foreground
+        // Force app to appear in foreground when launched from command line
         DispatchQueue.main.async {
             NSApp.setActivationPolicy(.regular)
-            // Removed: NSApp.activate(ignoringOtherApps: true) - causes conflicts with system dialogs
+            NSApp.activate(ignoringOtherApps: true)
         }
     }
     
@@ -19,20 +16,12 @@ struct ClickItApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(permissionManager)
-                .environmentObject(clickCoordinator)
-                .environmentObject(windowManager)
                 .onAppear {
-                    // Gentle window activation that doesn't interfere with system dialogs
+                    // Additional window activation
                     if let window = NSApp.windows.first {
                         window.makeKeyAndOrderFront(nil)
-                        // Removed: window.orderFrontRegardless() - causes conflicts with system dialogs
+                        window.orderFrontRegardless()
                     }
-                    
-                    // Start AutoCliq-style permission monitoring
-                    startPermissionMonitoring()
-                }
-                .onDisappear {
-                    stopPermissionMonitoring()
                 }
         }
         .windowResizability(.contentSize)
@@ -48,21 +37,5 @@ struct ClickItApp: App {
                 }
             }
         }
-    }
-    
-    // MARK: - AutoCliq-style Permission Monitoring
-    
-    private func startPermissionMonitoring() {
-        // Check permissions every 2 seconds when app is visible (AutoCliq's approach)
-        permissionCheckTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { _ in
-            Task { @MainActor in
-                permissionManager.updatePermissionStatus()
-            }
-        }
-    }
-    
-    private func stopPermissionMonitoring() {
-        permissionCheckTimer?.invalidate()
-        permissionCheckTimer = nil
     }
 }

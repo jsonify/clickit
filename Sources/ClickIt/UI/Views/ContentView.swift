@@ -2,8 +2,6 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject private var permissionManager: PermissionManager
-    @EnvironmentObject private var clickCoordinator: ClickCoordinator
-    @EnvironmentObject private var windowManager: WindowManager
     @State private var showingPermissionSetup = false
     @State private var showingWindowDetectionTest = false
     @State private var selectedClickPoint: CGPoint?
@@ -131,24 +129,12 @@ struct ContentView: View {
     }
     
     private func testClickAtPoint(_ point: CGPoint) {
-        Task {
-            let configuration = ClickConfiguration(
-                type: .left,
-                location: point,
-                targetPID: nil,
-                delayBetweenDownUp: 0.01
-            )
-            
-            let result = await clickCoordinator.performSingleClick(configuration: configuration)
-            
-            print("Click test result: \(result)")
-        }
+        // Test functionality temporarily disabled
+        print("Test click at point: \(point)")
     }
 }
 
 #Preview {
     ContentView()
         .environmentObject(PermissionManager.shared)
-        .environmentObject(ClickCoordinator.shared)
-        .environmentObject(WindowManager.shared)
 }
