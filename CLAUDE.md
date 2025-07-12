@@ -135,7 +135,7 @@ During development of Issue #8 (Visual Feedback System), several critical stabil
 - **Root Cause**: Expired Apple Development certificate (expired June 2021)
 - **Secondary Issue**: Original signing script ran `swift build` which overwrote universal release binary with debug binary
 - **Solution**: 
-  - Updated to use valid certificate: `Apple Development: jrueckert@costco.com (826L9Z2Y4X)` (expires May 2026)
+  - Updated to use valid certificate: `Apple Development: [DEVELOPER_NAME] ([TEAM_ID])` (certificate must be valid)
   - Fixed signing script to preserve universal binary (removed `swift build` command)
   - Check certificate validity: `security find-certificate -c "CERT_NAME" -p | openssl x509 -text -noout | grep "Not After"`
 
@@ -170,10 +170,22 @@ During development of Issue #8 (Visual Feedback System), several critical stabil
 ./build_app.sh
 
 # 2. Sign with valid certificate (preserves binary)
-./scripts/sign-app.sh
+CODE_SIGN_IDENTITY="Apple Development: Your Name (TEAM_ID)" ./scripts/sign-app.sh
 
 # 3. Launch for testing
 open dist/ClickIt.app
+```
+
+**Certificate Setup**:
+```bash
+# List available certificates
+security find-identity -v -p codesigning
+
+# Set certificate for session
+export CODE_SIGN_IDENTITY="Apple Development: Your Name (TEAM_ID)"
+
+# Or add to shell profile for persistence
+echo 'export CODE_SIGN_IDENTITY="Apple Development: Your Name (TEAM_ID)"' >> ~/.zshrc
 ```
 
 **Critical**: Always verify certificate validity before signing. Use `scripts/skip-signing.sh` if only self-signed certificate is needed.

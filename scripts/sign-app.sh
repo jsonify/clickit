@@ -14,8 +14,16 @@ if [ ! -d "dist/ClickIt.app" ]; then
     exit 1
 fi
 
-# Sign with development certificate (valid certificate)
-codesign --force --sign "Apple Development: jrueckert@costco.com (826L9Z2Y4X)" --timestamp dist/ClickIt.app
+# Sign with development certificate
+if [ -z "$CODE_SIGN_IDENTITY" ]; then
+    echo "❌ CODE_SIGN_IDENTITY environment variable not set"
+    echo "   Set it with: export CODE_SIGN_IDENTITY=\"Apple Development: Your Name (TEAM_ID)\""
+    echo "   Or run: CODE_SIGN_IDENTITY=\"Apple Development: Your Name (TEAM_ID)\" ./scripts/sign-app.sh"
+    exit 1
+fi
+
+echo "🔐 Using certificate: $CODE_SIGN_IDENTITY"
+codesign --force --sign "$CODE_SIGN_IDENTITY" --timestamp dist/ClickIt.app
 
 # Verify signing
 echo "✅ Verifying signature..."
