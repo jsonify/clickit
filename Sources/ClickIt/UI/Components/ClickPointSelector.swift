@@ -198,11 +198,15 @@ struct ClickCoordinateCapture {
         eventMonitor = NSEvent.addGlobalMonitorForEvents(matching: .leftMouseDown) { event in
             let screenPoint = NSEvent.mouseLocation
             
-            // Convert to screen coordinates
+            // NSEvent.mouseLocation already gives us the correct coordinates
+            // No conversion needed - use them directly
             let convertedPoint = CGPoint(
                 x: screenPoint.x,
-                y: NSScreen.main?.frame.height ?? 0 - screenPoint.y
+                y: screenPoint.y
             )
+            
+            print("ClickCoordinateCapture: Raw mouse location: \(screenPoint)")
+            print("ClickCoordinateCapture: Converted point: \(convertedPoint)")
             
             // Clean up monitor
             if let monitor = eventMonitor {

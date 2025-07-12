@@ -46,6 +46,14 @@ class ClickCoordinator: ObservableObject {
         isActive = true
         resetStatistics()
         
+        // Show visual feedback overlay if enabled
+        if configuration.showVisualFeedback {
+            print("ClickCoordinator: Starting automation with visual feedback at \(configuration.location)")
+            VisualFeedbackOverlay.shared.showOverlay(at: configuration.location, isActive: true)
+        } else {
+            print("ClickCoordinator: Starting automation without visual feedback")
+        }
+        
         automationTask = Task {
             await runAutomationLoop(configuration: configuration)
         }
@@ -53,10 +61,18 @@ class ClickCoordinator: ObservableObject {
     
     /// Stops the current automation session
     func stopAutomation() {
+        print("ClickCoordinator: stopAutomation() called")
         isActive = false
         automationTask?.cancel()
         automationTask = nil
+        
+        // Hide visual feedback overlay
+        print("ClickCoordinator: About to hide visual feedback overlay")
+        VisualFeedbackOverlay.shared.hideOverlay()
+        print("ClickCoordinator: Visual feedback overlay hidden")
+        
         automationConfig = nil
+        print("ClickCoordinator: stopAutomation() completed")
     }
     
     /// Performs a single click with the given configuration
@@ -197,6 +213,17 @@ class ClickCoordinator: ObservableObject {
             randomizeLocation(base: configuration.location, variance: configuration.locationVariance) :
             configuration.location
         
+        print("ClickCoordinator: Executing automation step at \(location)")
+        
+        // Update visual feedback overlay if enabled and location changed
+        if configuration.showVisualFeedback && location != configuration.location {
+            await MainActor.run {
+                VisualFeedbackOverlay.shared.updateOverlay(at: location, isActive: true)
+            }
+        }
+        
+        // Perform the actual click
+        print("ClickCoordinator: Performing actual click at \(location)")
         let result: ClickResult
         
         if let targetApp = configuration.targetApplication {
@@ -212,6 +239,15 @@ class ClickCoordinator: ObservableObject {
                 targetPID: nil
             )
             result = await performSingleClick(configuration: config)
+        }
+        
+        print("ClickCoordinator: Click result: success=\(result.success)")
+        
+        // Show click pulse for successful clicks
+        if configuration.showVisualFeedback && result.success {
+            await MainActor.run {
+                VisualFeedbackOverlay.shared.showClickPulse(at: location)
+            }
         }
         
         return result
@@ -275,6 +311,7 @@ struct AutomationConfiguration {
     let stopOnError: Bool
     let randomizeLocation: Bool
     let locationVariance: CGFloat
+    let showVisualFeedback: Bool
     
     init(
         location: CGPoint,
@@ -284,7 +321,8 @@ struct AutomationConfiguration {
         maxClicks: Int? = nil,
         stopOnError: Bool = false,
         randomizeLocation: Bool = false,
-        locationVariance: CGFloat = 0
+        locationVariance: CGFloat = 0,
+        showVisualFeedback: Bool = true
     ) {
         self.location = location
         self.clickType = clickType
@@ -294,6 +332,7 @@ struct AutomationConfiguration {
         self.stopOnError = stopOnError
         self.randomizeLocation = randomizeLocation
         self.locationVariance = locationVariance
+        self.showVisualFeedback = showVisualFeedback
     }
 }
 
@@ -318,11 +357,13 @@ extension ClickCoordinator {
     ///   - location: Location to click
     ///   - interval: Interval between clicks
     ///   - maxClicks: Maximum number of clicks (optional)
-    func startSimpleAutomation(at location: CGPoint, interval: TimeInterval, maxClicks: Int? = nil) {
+    ///   - showVisualFeedback: Whether to show visual feedback overlay
+    func startSimpleAutomation(at location: CGPoint, interval: TimeInterval, maxClicks: Int? = nil, showVisualFeedback: Bool = true) {
         let config = AutomationConfiguration(
             location: location,
             clickInterval: interval,
-            maxClicks: maxClicks
+            maxClicks: maxClicks,
+            showVisualFeedback: showVisualFeedback
         )
         startAutomation(with: config)
     }
@@ -333,18 +374,21 @@ extension ClickCoordinator {
     ///   - interval: Interval between clicks
     ///   - variance: Location randomization variance
     ///   - maxClicks: Maximum number of clicks (optional)
+    ///   - showVisualFeedback: Whether to show visual feedback overlay
     func startRandomizedAutomation(
         at location: CGPoint,
         interval: TimeInterval,
         variance: CGFloat,
-        maxClicks: Int? = nil
+        maxClicks: Int? = nil,
+        showVisualFeedback: Bool = true
     ) {
         let config = AutomationConfiguration(
             location: location,
             clickInterval: interval,
             maxClicks: maxClicks,
             randomizeLocation: true,
-            locationVariance: variance
+            locationVariance: variance,
+            showVisualFeedback: showVisualFeedback
         )
         startAutomation(with: config)
     }
