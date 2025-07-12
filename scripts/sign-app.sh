@@ -7,9 +7,6 @@ set -e
 
 echo "🔐 Signing ClickIt app..."
 
-# Build the app first
-swift build
-
 # Copy to app bundle (if not already done by build script)
 if [ ! -d "dist/ClickIt.app" ]; then
     echo "❌ App bundle not found at dist/ClickIt.app"
@@ -17,7 +14,7 @@ if [ ! -d "dist/ClickIt.app" ]; then
     exit 1
 fi
 
-# Sign with development certificate (trying the other cert)
+# Sign with development certificate (valid certificate)
 codesign --force --sign "Apple Development: jrueckert@costco.com (826L9Z2Y4X)" --timestamp dist/ClickIt.app
 
 # Verify signing

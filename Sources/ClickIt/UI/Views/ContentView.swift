@@ -120,6 +120,8 @@ struct ContentView: View {
         .background(Color(NSColor.windowBackgroundColor))
         .onAppear {
             permissionManager.updatePermissionStatus()
+            // Start monitoring for permission changes
+            permissionManager.startPermissionMonitoring()
         }
         .sheet(isPresented: $showingPermissionSetup) {
             PermissionRequestView()

@@ -12,7 +12,11 @@ class ClickSettings: ObservableObject {
     @Published var clickIntervalMs: Double = 1000.0 {
         didSet {
             // Ensure interval is within valid range
-            clickIntervalMs = max(AppConstants.minClickInterval * 1000, min(AppConstants.maxClickInterval * 1000, clickIntervalMs))
+            let clampedValue = max(AppConstants.minClickInterval * 1000, min(AppConstants.maxClickInterval * 1000, clickIntervalMs))
+            if clickIntervalMs != clampedValue {
+                clickIntervalMs = clampedValue
+                return // saveSettings() will be called by the recursive didSet
+            }
             saveSettings()
         }
     }
@@ -34,7 +38,11 @@ class ClickSettings: ObservableObject {
     /// Duration value in seconds (when duration mode is not unlimited)
     @Published var durationSeconds: Double = 60.0 {
         didSet {
-            durationSeconds = max(1.0, min(86400.0, durationSeconds)) // 1 second to 24 hours
+            let clampedValue = max(1.0, min(86400.0, durationSeconds)) // 1 second to 24 hours
+            if durationSeconds != clampedValue {
+                durationSeconds = clampedValue
+                return // saveSettings() will be called by the recursive didSet
+            }
             saveSettings()
         }
     }
@@ -42,7 +50,11 @@ class ClickSettings: ObservableObject {
     /// Maximum number of clicks (when duration mode is click count)
     @Published var maxClicks: Int = 100 {
         didSet {
-            maxClicks = max(1, min(10000, maxClicks)) // 1 to 10,000 clicks
+            let clampedValue = max(1, min(10000, maxClicks)) // 1 to 10,000 clicks
+            if maxClicks != clampedValue {
+                maxClicks = clampedValue
+                return // saveSettings() will be called by the recursive didSet
+            }
             saveSettings()
         }
     }
@@ -71,7 +83,11 @@ class ClickSettings: ObservableObject {
     /// Location randomization variance in pixels
     @Published var locationVariance: Double = 5.0 {
         didSet {
-            locationVariance = max(0.0, min(100.0, locationVariance)) // 0 to 100 pixels
+            let clampedValue = max(0.0, min(100.0, locationVariance)) // 0 to 100 pixels
+            if locationVariance != clampedValue {
+                locationVariance = clampedValue
+                return // saveSettings() will be called by the recursive didSet
+            }
             saveSettings()
         }
     }
