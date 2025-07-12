@@ -90,6 +90,32 @@ The build system automatically detects available architectures and creates unive
 - **Apple Silicon**: `arm64-apple-macosx`
 - **Universal**: Combined binary supporting both architectures
 
+#### Code Signing for Permission Persistence
+
+The build script automatically attempts to code sign the app to improve permission persistence. This helps avoid having to re-grant Accessibility and Screen Recording permissions after each rebuild.
+
+**Automatic Signing:**
+The build script (`build_app.sh`) will automatically:
+1. Look for ClickIt-specific certificates first
+2. Fall back to any available Apple Developer certificates
+3. Display the signing status in the build output
+
+**For Self-Signed Certificates:**
+If you don't have an Apple Developer account, you can create a self-signed certificate:
+```bash
+# See detailed instructions
+cat CERTIFICATE_SETUP.md
+```
+
+**Verify Code Signing:**
+```bash
+# Check if app is signed
+codesign --display --verbose dist/ClickIt.app
+
+# Verify signature
+codesign --verify --verbose dist/ClickIt.app
+```
+
 #### Testing
 ```bash
 # Run unit tests

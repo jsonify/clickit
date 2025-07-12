@@ -9,6 +9,7 @@ DIST_DIR="dist"
 APP_NAME="ClickIt"
 BUNDLE_ID="com.jsonify.clickit"
 VERSION="1.0.0"
+BUILD_NUMBER=$(date +%Y%m%d%H%M)
 
 echo "🔨 Building $APP_NAME app bundle ($BUILD_MODE mode)..."
 
@@ -103,7 +104,7 @@ cat > "$APP_BUNDLE/Contents/Info.plist" << EOF
     <key>CFBundleShortVersionString</key>
     <string>$VERSION</string>
     <key>CFBundleVersion</key>
-    <string>1</string>
+    <string>$BUILD_NUMBER</string>
     <key>LSMinimumSystemVersion</key>
     <string>15.0</string>
     <key>LSUIElement</key>
@@ -119,6 +120,61 @@ EOF
 # Make executable
 chmod +x "$APP_BUNDLE/Contents/MacOS/$APP_NAME"
 
+# Code signing with self-signed certificate (if available)
+echo "🔐 Attempting to code sign the app..."
+CERT_NAME=""
+
+# Try to find a suitable code signing certificate
+echo "🔍 Looking for code signing certificates..."
+
+# First, check if ClickIt Developer Certificate exists (even if not shown by find-identity)
+if security find-certificate -c "ClickIt Developer Certificate" >/dev/null 2>&1; then
+    CERT_NAME="ClickIt Developer Certificate"
+    echo "✅ Found ClickIt Developer Certificate (self-signed)"
+else
+    # Fall back to other available certificates
+    AVAILABLE_CERTS=$(security find-identity -v -p codesigning 2>/dev/null | grep -E '".*"' | head -5)
+    
+    if [ -n "$AVAILABLE_CERTS" ]; then
+        echo "📜 Available certificates:"
+        echo "$AVAILABLE_CERTS"
+        
+        # Look for ClickIt-specific certificate first in the list
+        CLICKIT_CERT=$(echo "$AVAILABLE_CERTS" | grep -i "clickit" | head -1 | sed 's/.*"\(.*\)".*/\1/')
+        if [ -n "$CLICKIT_CERT" ]; then
+            CERT_NAME="$CLICKIT_CERT"
+            echo "✅ Found ClickIt-specific certificate: $CERT_NAME"
+        else
+            # Fall back to first available certificate
+            FIRST_CERT=$(echo "$AVAILABLE_CERTS" | head -1 | sed 's/.*"\(.*\)".*/\1/')
+            if [ -n "$FIRST_CERT" ]; then
+                CERT_NAME="$FIRST_CERT"
+                echo "⚠️  Using first available certificate: $CERT_NAME"
+            fi
+        fi
+    fi
+fi
+
+if [ -n "$CERT_NAME" ]; then
+    echo "🔐 Code signing with certificate: $CERT_NAME"
+    if codesign --deep --force --sign "$CERT_NAME" "$APP_BUNDLE" 2>/dev/null; then
+        echo "✅ Code signing successful!"
+        
+        # Verify the signature
+        if codesign --verify --verbose "$APP_BUNDLE" 2>/dev/null; then
+            echo "✅ Code signature verification passed"
+        else
+            echo "⚠️  Code signature verification failed, but app was signed"
+        fi
+    else
+        echo "⚠️  Code signing failed, but app will still work (permissions may not persist)"
+    fi
+else
+    echo "⚠️  No code signing certificates found"
+    echo "📋 To improve permission persistence, create a self-signed certificate:"
+    echo "   See CERTIFICATE_SETUP.md for instructions"
+fi
+
 # Create build metadata
 echo "📋 Creating build metadata..."
 cat > "$DIST_DIR/build-info.txt" << EOF
@@ -127,7 +183,9 @@ Mode: $BUILD_MODE
 Architectures: ${ARCH_LIST[*]}
 Binary Type: $([ ${#BINARY_PATHS[@]} -gt 1 ] && echo "Universal" || echo "Single Architecture")
 Version: $VERSION
+Build Number: $BUILD_NUMBER
 Bundle ID: $BUNDLE_ID
+Code Signed: $([ -n "$CERT_NAME" ] && echo "Yes ($CERT_NAME)" || echo "No")
 EOF
 
 echo "✅ $APP_NAME.app created successfully!"
