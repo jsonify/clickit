@@ -3,16 +3,7 @@ import CoreGraphics
 
 struct ConfigurationPanel: View {
     @EnvironmentObject private var clickCoordinator: ClickCoordinator
-    @State private var clickInterval: Double = 1.0
-    @State private var selectedClickType: ClickType = .left
-    @State private var durationEnabled: Bool = false
-    @State private var duration: Double = 60.0
-    @State private var maxClicksEnabled: Bool = false
-    @State private var maxClicks: Int = 100
-    @State private var targetApplication: String = ""
-    @State private var locationVariance: Double = 0.0
-    @State private var randomizeLocation: Bool = false
-    @State private var stopOnError: Bool = false
+    @StateObject private var clickSettings = ClickSettings()
 
     let selectedClickPoint: CGPoint?
 
@@ -51,15 +42,15 @@ struct ConfigurationPanel: View {
                                         .font(.subheadline)
                                         .fontWeight(.medium)
                                     Spacer()
-                                    Text("\(formatInterval(clickInterval))")
+                                    Text(formatInterval(clickSettings.clickIntervalMs / 1000.0))
                                         .font(.system(.caption, design: .monospaced))
                                         .foregroundColor(.secondary)
                                 }
 
-                                Slider(value: $clickInterval, in: 0.01...10.0, step: 0.01) {
+                                Slider(value: $clickSettings.clickIntervalMs, in: 10...10000, step: 10) {
                                     Text("Click Interval")
                                 } minimumValueLabel: {
-                                    Text("0.01s")
+                                    Text("10ms")
                                         .font(.caption2)
                                 } maximumValueLabel: {
                                     Text("10s")
@@ -73,7 +64,7 @@ struct ConfigurationPanel: View {
                                     .font(.subheadline)
                                     .fontWeight(.medium)
 
-                                Picker("Click Type", selection: $selectedClickType) {
+                                Picker("Click Type", selection: $clickSettings.clickType) {
                                     ForEach(ClickType.allCases, id: \.self) { type in
                                         HStack {
                                             Image(systemName: type == .left ?
@@ -91,22 +82,33 @@ struct ConfigurationPanel: View {
                     // Duration Control Section
                     configurationSection(title: "Duration Control", icon: "timer") {
                         VStack(spacing: 12) {
-                            // Duration limit toggle
-                            Toggle("Limit Duration", isOn: $durationEnabled)
-                                .font(.subheadline)
-                                .fontWeight(.medium)
+                            // Duration mode picker
+                            Picker("Duration Mode", selection: $clickSettings.durationMode) {
+                                ForEach(DurationMode.allCases, id: \.self) { mode in
+                                    Text(mode.displayName).tag(mode)
+                                }
+                            }
+                            .pickerStyle(.segmented)
 
-                            if durationEnabled {
+                            // Duration controls based on mode
+                            switch clickSettings.durationMode {
+                            case .unlimited:
+                                Text("Automation will run until manually stopped")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                    .italic()
+
+                            case .timeLimit:
                                 VStack(alignment: .leading, spacing: 4) {
                                     HStack {
                                         Text("Duration")
                                         Spacer()
-                                        Text(formatDuration(duration))
+                                        Text(formatDuration(clickSettings.durationSeconds))
                                             .font(.system(.caption, design: .monospaced))
                                             .foregroundColor(.secondary)
                                     }
 
-                                    Slider(value: $duration, in: 1...3600, step: 1) {
+                                    Slider(value: $clickSettings.durationSeconds, in: 1...3600, step: 1) {
                                         Text("Duration")
                                     } minimumValueLabel: {
                                         Text("1s")
@@ -116,19 +118,13 @@ struct ConfigurationPanel: View {
                                             .font(.caption2)
                                     }
                                 }
-                            }
 
-                            // Max clicks toggle
-                            Toggle("Limit Click Count", isOn: $maxClicksEnabled)
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-
-                            if maxClicksEnabled {
+                            case .clickCount:
                                 HStack {
                                     Text("Max Clicks:")
                                         .font(.subheadline)
                                     Spacer()
-                                    TextField("Count", value: $maxClicks, format: .number)
+                                    TextField("Count", value: $clickSettings.maxClicks, format: .number)
                                         .textFieldStyle(.roundedBorder)
                                         .frame(width: 80)
                                         .multilineTextAlignment(.trailing)
@@ -147,9 +143,12 @@ struct ConfigurationPanel: View {
                                 Spacer()
                             }
 
-                            TextField("com.example.app (optional)", text: $targetApplication)
-                                .textFieldStyle(.roundedBorder)
-                                .font(.system(.body, design: .monospaced))
+                            TextField("com.example.app (optional)", text: Binding(
+                                get: { clickSettings.targetApplication ?? "" },
+                                set: { clickSettings.targetApplication = $0.isEmpty ? nil : $0 }
+                            ))
+                            .textFieldStyle(.roundedBorder)
+                            .font(.system(.body, design: .monospaced))
 
                             HStack {
                                 Image(systemName: "info.circle")
@@ -166,21 +165,21 @@ struct ConfigurationPanel: View {
                     configurationSection(title: "Advanced Settings", icon: "gearshape.2") {
                         VStack(spacing: 12) {
                             // Location randomization
-                            Toggle("Randomize Click Location", isOn: $randomizeLocation)
+                            Toggle("Randomize Click Location", isOn: $clickSettings.randomizeLocation)
                                 .font(.subheadline)
                                 .fontWeight(.medium)
 
-                            if randomizeLocation {
+                            if clickSettings.randomizeLocation {
                                 VStack(alignment: .leading, spacing: 4) {
                                     HStack {
                                         Text("Variance (pixels)")
                                         Spacer()
-                                        Text("\(Int(locationVariance))px")
+                                        Text("\(Int(clickSettings.locationVariance))px")
                                             .font(.system(.caption, design: .monospaced))
                                             .foregroundColor(.secondary)
                                     }
 
-                                    Slider(value: $locationVariance, in: 0...50, step: 1) {
+                                    Slider(value: $clickSettings.locationVariance, in: 0...50, step: 1) {
                                         Text("Variance")
                                     } minimumValueLabel: {
                                         Text("0")
@@ -193,7 +192,16 @@ struct ConfigurationPanel: View {
                             }
 
                             // Error handling
-                            Toggle("Stop on Error", isOn: $stopOnError)
+                            Toggle("Stop on Error", isOn: $clickSettings.stopOnError)
+                                .font(.subheadline)
+                                .fontWeight(.medium)
+
+                            // Feedback options
+                            Toggle("Show Visual Feedback", isOn: $clickSettings.showVisualFeedback)
+                                .font(.subheadline)
+                                .fontWeight(.medium)
+
+                            Toggle("Play Sound Feedback", isOn: $clickSettings.playSoundFeedback)
                                 .font(.subheadline)
                                 .fontWeight(.medium)
                         }
@@ -213,13 +221,13 @@ struct ConfigurationPanel: View {
                                         .foregroundColor(.secondary)
                                 }
 
-                                if !targetApplication.isEmpty {
+                                if let targetApp = clickSettings.targetApplication, !targetApp.isEmpty {
                                     HStack {
                                         Text("Target App:")
                                             .font(.subheadline)
                                             .fontWeight(.medium)
                                         Spacer()
-                                        Text(targetApplication)
+                                        Text(targetApp)
                                             .font(.system(.caption, design: .monospaced))
                                             .foregroundColor(.secondary)
                                             .lineLimit(1)
@@ -232,7 +240,7 @@ struct ConfigurationPanel: View {
                                         .font(.subheadline)
                                         .fontWeight(.medium)
                                     Spacer()
-                                    Text("\(String(format: "%.2f", 1.0 / clickInterval))")
+                                    Text(String(format: "%.2f", 1000.0 / clickSettings.clickIntervalMs))
                                         .font(.system(.caption, design: .monospaced))
                                         .foregroundColor(.secondary)
                                 }
@@ -252,7 +260,7 @@ struct ConfigurationPanel: View {
                             }
                             .buttonStyle(.borderedProminent)
                             .controlSize(.large)
-                            .disabled(selectedClickPoint == nil)
+                            .disabled(!clickSettings.isValid || selectedClickPoint == nil)
                         } else {
                             Button(action: stopAutomation) {
                                 HStack {
@@ -266,6 +274,19 @@ struct ConfigurationPanel: View {
                             .foregroundColor(.red)
                         }
 
+                        // Reset button
+                        Button(action: {
+                            clickSettings.resetToDefaults()
+                        }) {
+                            HStack {
+                                Image(systemName: "arrow.clockwise")
+                                Text("Reset to Defaults")
+                            }
+                            .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.regular)
+
                         // Statistics display
                         if clickCoordinator.isActive || clickCoordinator.clickCount > 0 {
                             StatisticsView()
@@ -277,6 +298,17 @@ struct ConfigurationPanel: View {
         .padding(16)
         .background(Color(NSColor.controlBackgroundColor))
         .cornerRadius(12)
+        .onChange(of: selectedClickPoint) { _, newPoint in
+            if let point = newPoint {
+                clickSettings.clickLocation = point
+            }
+        }
+        .onAppear {
+            // Sync the click location if available
+            if let point = selectedClickPoint {
+                clickSettings.clickLocation = point
+            }
+        }
     }
 
     @ViewBuilder
@@ -305,17 +337,13 @@ struct ConfigurationPanel: View {
     private func startAutomation() {
         guard let point = selectedClickPoint else { return }
 
-        let config = AutomationConfiguration(
-            location: point,
-            clickType: selectedClickType,
-            clickInterval: clickInterval,
-            targetApplication: targetApplication.isEmpty ? nil : targetApplication,
-            maxClicks: maxClicksEnabled ? maxClicks : nil,
-            stopOnError: stopOnError,
-            randomizeLocation: randomizeLocation,
-            locationVariance: CGFloat(locationVariance)
-        )
+        // Update the click location in settings
+        clickSettings.clickLocation = point
 
+        // Create configuration from settings
+        let config = clickSettings.createAutomationConfiguration()
+
+        // Start automation
         clickCoordinator.startAutomation(with: config)
     }
 

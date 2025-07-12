@@ -5,9 +5,9 @@ import Combine
 /// Configuration settings for click automation
 @MainActor
 class ClickSettings: ObservableObject {
-    
+
     // MARK: - Published Properties
-    
+
     /// Click interval in milliseconds
     @Published var clickIntervalMs: Double = 1000.0 {
         didSet {
@@ -16,21 +16,21 @@ class ClickSettings: ObservableObject {
             saveSettings()
         }
     }
-    
+
     /// Selected click type
     @Published var clickType: ClickType = .left {
         didSet {
             saveSettings()
         }
     }
-    
+
     /// Duration mode for stopping automation
     @Published var durationMode: DurationMode = .unlimited {
         didSet {
             saveSettings()
         }
     }
-    
+
     /// Duration value in seconds (when duration mode is not unlimited)
     @Published var durationSeconds: Double = 60.0 {
         didSet {
@@ -38,7 +38,7 @@ class ClickSettings: ObservableObject {
             saveSettings()
         }
     }
-    
+
     /// Maximum number of clicks (when duration mode is click count)
     @Published var maxClicks: Int = 100 {
         didSet {
@@ -46,28 +46,28 @@ class ClickSettings: ObservableObject {
             saveSettings()
         }
     }
-    
+
     /// Currently selected click location
     @Published var clickLocation: CGPoint = .zero {
         didSet {
             saveSettings()
         }
     }
-    
+
     /// Currently selected target application
-    @Published var targetApplication: String? = nil {
+    @Published var targetApplication: String? {
         didSet {
             saveSettings()
         }
     }
-    
+
     /// Whether to randomize click location
     @Published var randomizeLocation: Bool = false {
         didSet {
             saveSettings()
         }
     }
-    
+
     /// Location randomization variance in pixels
     @Published var locationVariance: Double = 5.0 {
         didSet {
@@ -75,40 +75,40 @@ class ClickSettings: ObservableObject {
             saveSettings()
         }
     }
-    
+
     /// Whether to stop automation on errors
     @Published var stopOnError: Bool = false {
         didSet {
             saveSettings()
         }
     }
-    
+
     /// Whether to show visual feedback during automation
     @Published var showVisualFeedback: Bool = true {
         didSet {
             saveSettings()
         }
     }
-    
+
     /// Whether to play sound feedback
     @Published var playSoundFeedback: Bool = false {
         didSet {
             saveSettings()
         }
     }
-    
+
     // MARK: - Computed Properties
-    
+
     /// Click interval in seconds
     var clickIntervalSeconds: Double {
         clickIntervalMs / 1000.0
     }
-    
+
     /// Whether the current settings are valid
     var isValid: Bool {
         clickLocation != .zero && clickIntervalMs >= (AppConstants.minClickInterval * 1000)
     }
-    
+
     /// Validation message for current settings
     var validationMessage: String? {
         if clickLocation == .zero {
@@ -119,20 +119,20 @@ class ClickSettings: ObservableObject {
         }
         return nil
     }
-    
+
     // MARK: - Private Properties
-    
+
     private let userDefaults = UserDefaults.standard
     private let settingsKey = "ClickItSettings"
-    
+
     // MARK: - Initialization
-    
+
     init() {
         loadSettings()
     }
-    
+
     // MARK: - Settings Management
-    
+
     /// Save current settings to UserDefaults
     private func saveSettings() {
         let settings = SettingsData(
@@ -149,34 +149,41 @@ class ClickSettings: ObservableObject {
             showVisualFeedback: showVisualFeedback,
             playSoundFeedback: playSoundFeedback
         )
-        
-        if let encoded = try? JSONEncoder().encode(settings) {
+
+        do {
+            let encoded = try JSONEncoder().encode(settings)
             userDefaults.set(encoded, forKey: settingsKey)
+        } catch {
+            print("ClickSettings: Failed to save settings - \(error.localizedDescription)")
         }
     }
-    
+
     /// Load settings from UserDefaults
     private func loadSettings() {
-        guard let data = userDefaults.data(forKey: settingsKey),
-              let settings = try? JSONDecoder().decode(SettingsData.self, from: data) else {
-            // Use default settings if none exist
+        guard let data = userDefaults.data(forKey: settingsKey) else {
+            // No saved settings, use defaults
             return
         }
-        
-        clickIntervalMs = settings.clickIntervalMs
-        clickType = settings.clickType
-        durationMode = settings.durationMode
-        durationSeconds = settings.durationSeconds
-        maxClicks = settings.maxClicks
-        clickLocation = settings.clickLocation
-        targetApplication = settings.targetApplication
-        randomizeLocation = settings.randomizeLocation
-        locationVariance = settings.locationVariance
-        stopOnError = settings.stopOnError
-        showVisualFeedback = settings.showVisualFeedback
-        playSoundFeedback = settings.playSoundFeedback
+
+        do {
+            let settings = try JSONDecoder().decode(SettingsData.self, from: data)
+            clickIntervalMs = settings.clickIntervalMs
+            clickType = settings.clickType
+            durationMode = settings.durationMode
+            durationSeconds = settings.durationSeconds
+            maxClicks = settings.maxClicks
+            clickLocation = settings.clickLocation
+            targetApplication = settings.targetApplication
+            randomizeLocation = settings.randomizeLocation
+            locationVariance = settings.locationVariance
+            stopOnError = settings.stopOnError
+            showVisualFeedback = settings.showVisualFeedback
+            playSoundFeedback = settings.playSoundFeedback
+        } catch {
+            print("ClickSettings: Failed to load settings - \(error.localizedDescription). Using defaults.")
+        }
     }
-    
+
     /// Reset all settings to defaults
     func resetToDefaults() {
         clickIntervalMs = 1000.0
@@ -191,12 +198,13 @@ class ClickSettings: ObservableObject {
         stopOnError = false
         showVisualFeedback = true
         playSoundFeedback = false
+        saveSettings()
     }
-    
+
     /// Create automation configuration from current settings
     func createAutomationConfiguration() -> AutomationConfiguration {
         let maxClicksValue = durationMode == .clickCount ? maxClicks : nil
-        
+
         return AutomationConfiguration(
             location: clickLocation,
             clickType: clickType,
@@ -217,7 +225,7 @@ enum DurationMode: String, CaseIterable, Codable {
     case unlimited = "unlimited"
     case timeLimit = "timeLimit"
     case clickCount = "clickCount"
-    
+
     var displayName: String {
         switch self {
         case .unlimited:
@@ -228,7 +236,7 @@ enum DurationMode: String, CaseIterable, Codable {
             return "Click Count"
         }
     }
-    
+
     var description: String {
         switch self {
         case .unlimited:
