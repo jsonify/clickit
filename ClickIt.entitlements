@@ -2,9 +2,9 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<!-- Enable App Sandbox for better security and distribution -->
+	<!-- CRITICAL: App Sandbox MUST be disabled for accessibility features -->
 	<key>com.apple.security.app-sandbox</key>
-	<true/>
+	<false/>
 	
 	<!-- Allow accessibility features for mouse control -->
 	<key>com.apple.security.automation.apple-events</key>
