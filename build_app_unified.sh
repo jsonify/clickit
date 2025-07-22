@@ -43,15 +43,35 @@ detect_build_system
 if [ "$BUILD_SYSTEM" = "xcode" ]; then
     echo "🏗️  Building with Xcode..."
     
-    # Find Xcode project
-    XCODE_PROJECT=""
-    if [ -f "ClickIt.xcodeproj/project.pbxproj" ]; then
-        XCODE_PROJECT="ClickIt.xcodeproj"
+    # Check if xcodebuild is available
+    if ! command -v xcodebuild > /dev/null 2>&1; then
+        CURRENT_PATH=$(xcode-select -p 2>/dev/null || echo "unknown")
+        echo "❌ xcodebuild not available"
+        echo "📍 Current developer path: $CURRENT_PATH"
+        
+        if [ -d "/Applications/Xcode.app" ]; then
+            echo "💡 Found Xcode.app - switch to full Xcode with:"
+            echo "   sudo xcode-select -s /Applications/Xcode.app/Contents/Developer"
+            echo "   ./setup_xcode_path.sh"
+        else
+            echo "💡 Install full Xcode from the Mac App Store"
+        fi
+        echo "🔄 Falling back to SPM build..."
+        BUILD_SYSTEM="spm"
     else
-        echo "❌ Xcode project not found in current directory"
-        echo "💡 Make sure you're running this script from /Users/jsonify/code/macOS/ClickIt/"
-        exit 1
+        # Find Xcode project
+        XCODE_PROJECT=""
+        if [ -f "ClickIt.xcodeproj/project.pbxproj" ]; then
+            XCODE_PROJECT="ClickIt.xcodeproj"
+        else
+            echo "❌ Xcode project not found in current directory"
+            echo "💡 Generate it with: ./generate_xcode_project.sh"
+            exit 1
+        fi
     fi
+fi
+
+if [ "$BUILD_SYSTEM" = "xcode" ]; then
     
     # Convert SPM build mode to Xcode configuration
     XCODE_CONFIG="Debug"
@@ -61,11 +81,11 @@ if [ "$BUILD_SYSTEM" = "xcode" ]; then
     
     echo "⚙️  Building with configuration: $XCODE_CONFIG"
     
-    # Build with Xcode using custom Info.plist
-    echo "🔧 Configuring Xcode build to use custom Info.plist..."
+    # Build with Xcode using custom Info.plist and entitlements
+    echo "🔧 Configuring Xcode build to use custom Info.plist and entitlements..."
     
-    # Prepare build settings
-    BUILD_SETTINGS="INFOPLIST_FILE=ClickIt/Info.plist GENERATE_INFOPLIST_FILE=NO"
+    # Prepare build settings with proper paths for generated Xcode project
+    BUILD_SETTINGS="INFOPLIST_FILE=Info.plist CODE_SIGN_ENTITLEMENTS=ClickIt.entitlements GENERATE_INFOPLIST_FILE=NO"
     
     # Add code signing settings if specified (for CI)
     if [ -n "$CODE_SIGN_IDENTITY" ]; then
@@ -304,7 +324,7 @@ if [ -n "$CERT_NAME" ]; then
     
     # Sign the main app bundle (after all modifications including rpath changes)
     # Use entitlements if they exist
-    ENTITLEMENTS_FILE="ClickIt/ClickIt.entitlements"
+    ENTITLEMENTS_FILE="ClickIt.entitlements"
     CODESIGN_ARGS="--deep --force --sign \"$CERT_NAME\""
     if [ -f "$ENTITLEMENTS_FILE" ]; then
         echo "🔐 Using entitlements from $ENTITLEMENTS_FILE"

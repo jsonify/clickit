@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- ClickIt requires system-level access for mouse event injection -->
+	<!-- App sandbox is disabled to allow accessibility and window management -->
+	<key>com.apple.security.app-sandbox</key>
+	<false/>
+	
+	<!-- Essential entitlement for Accessibility API access -->
+	<key>com.apple.security.automation.apple-events</key>
+	<true/>
+	
+	<!-- Allow ClickIt to read user-selected files if needed -->
+	<key>com.apple.security.files.user-selected.read-only</key>
+	<true/>
+	
+	<!-- Allow outgoing network connections for potential future features -->
+	<key>com.apple.security.network.client</key>
+	<true/>
+	
+	<!-- Apple Silicon specific entitlements for enhanced security -->
+	<!-- Allow get-task-allow for debugging and development -->
+	<key>com.apple.security.get-task-allow</key>
+	<true/>
+	
+	<!-- Disable library validation for better compatibility -->
+	<key>com.apple.security.cs.disable-library-validation</key>
+	<true/>
+	
+	<!-- Allow unsigned executable memory for runtime optimization -->
+	<key>com.apple.security.cs.allow-unsigned-executable-memory</key>
+	<true/>
+</dict>
+</plist>

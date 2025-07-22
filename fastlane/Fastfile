@@ -14,10 +14,33 @@ BUNDLE_ID = "com.jsonify.ClickIt"
 DIST_DIR = "dist"
 
 platform :mac do
+  desc "Setup Xcode project and development environment"
+  lane :setup do
+    Dir.chdir("..") do
+      UI.message("🔧 Setting up ClickIt development environment...")
+      
+      # Generate Xcode project if it doesn't exist
+      unless File.exist?("ClickIt.xcodeproj/project.pbxproj")
+        UI.message("📦 Generating Xcode project...")
+        sh("./generate_xcode_project.sh")
+      else
+        UI.message("✅ Xcode project already exists")
+      end
+      
+      # Setup Xcode path if needed
+      if File.exist?("setup_xcode_path.sh")
+        UI.message("🔧 Configuring Xcode developer path...")
+        sh("./setup_xcode_path.sh")
+      end
+    end
+    UI.success("Setup completed! 🎉")
+    UI.message("💡 Open in Xcode: open ClickIt.xcodeproj")
+  end
+
   desc "Build ClickIt app (Debug)"
   lane :build_debug do
     Dir.chdir("..") do
-      sh("./build_app_unified.sh debug spm")
+      sh("./build_app_unified.sh debug")
     end
     UI.success("Debug build completed! 🎉")
     UI.message("App location: dist/ClickIt.app")
@@ -26,10 +49,20 @@ platform :mac do
   desc "Build ClickIt app (Release)"
   lane :build_release do
     Dir.chdir("..") do
-      sh("./build_app_unified.sh release spm")
+      sh("./build_app_unified.sh release")
     end
     UI.success("Release build completed! 🚀")
     UI.message("App location: dist/ClickIt.app")
+  end
+
+  desc "Build ClickIt app using Xcode (better permissions handling)"
+  lane :build_xcode do
+    Dir.chdir("..") do
+      sh("./build_app_unified.sh release xcode")
+    end
+    UI.success("Xcode build completed! 🎯")
+    UI.message("App location: dist/ClickIt.app")
+    UI.message("💡 This build has better permissions and entitlements handling")
   end
 
   desc "Build and run ClickIt app"

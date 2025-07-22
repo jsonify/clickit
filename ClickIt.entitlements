@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Enable App Sandbox for better security and distribution -->
+	<key>com.apple.security.app-sandbox</key>
+	<true/>
+	
+	<!-- Allow accessibility features for mouse control -->
+	<key>com.apple.security.automation.apple-events</key>
+	<true/>
+	
+	<!-- Allow network access for update checking -->
+	<key>com.apple.security.network.client</key>
+	<true/>
+	
+	<!-- Allow reading/writing user selected files (for presets) -->
+	<key>com.apple.security.files.user-selected.read-write</key>
+	<true/>
+	
+	<!-- Enable hardened runtime for notarization -->
+	<key>com.apple.security.cs.allow-jit</key>
+	<false/>
+	<key>com.apple.security.cs.allow-unsigned-executable-memory</key>
+	<false/>
+	<key>com.apple.security.cs.allow-dyld-environment-variables</key>
+	<false/>
+	<key>com.apple.security.cs.disable-library-validation</key>
+	<false/>
+	
+	<!-- Required for Sparkle framework updates -->
+	<key>com.apple.security.network.server</key>
+	<false/>
+	
+	<!-- Disable inheriting other app's permissions -->
+	<key>com.apple.security.inherit</key>
+	<false/>
+	
+	<!-- Allow temporary exception for accessibility until full sandbox compliance -->
+	<key>com.apple.security.temporary-exception.apple-events</key>
+	<string>com.apple.systemevents</string>
+</dict>
+</plist>

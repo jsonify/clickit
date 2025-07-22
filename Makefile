@@ -101,10 +101,12 @@ lint: ## Run SwiftLint code quality checks
 
 local: build test lint ## Build, test, lint, and create local app bundle for testing
 	@echo "$(BLUE)📱 Creating local app bundle...$(NC)"
-	@if [ -f "./build_app.sh" ]; then \
+	@if [ -f "./build_app_unified.sh" ]; then \
+		./build_app_unified.sh $(BUILD_MODE); \
+	elif [ -f "./build_app.sh" ]; then \
 		./build_app.sh $(BUILD_MODE); \
 	else \
-		echo "❌ build_app.sh not found"; \
+		echo "❌ build script not found"; \
 		exit 1; \
 	fi
 	@echo "$(GREEN)✅ Local build complete! Launch with: open $(DIST_DIR)/$(APP_NAME).app$(NC)"

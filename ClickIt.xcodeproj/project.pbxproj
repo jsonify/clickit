@@ -1,0 +1,675 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 63;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		04C54284E141A3B21B788D01 /* ClickItApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54378C96FA6BBE7848580B2A /* ClickItApp.swift */; };
+		05684175A538D396B0C3EE42 /* ClickPrecisionTester.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB2BB80E1FA0B04B4923B97 /* ClickPrecisionTester.swift */; };
+		0A82BE46023C8D2B1A2E4370 /* BackgroundClicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 488AA47A1878EED9D0DB558F /* BackgroundClicker.swift */; };
+		0D04ED7B7D38EA4728A12FF2 /* WindowTargeter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DD0B512DC59B56FDDC5E7B8 /* WindowTargeter.swift */; };
+		12DA953DD023F97F3090F38C /* Contents.json in Resources */ = {isa = PBXBuildFile; fileRef = BC7CFAF78B42DA22D527036D /* Contents.json */; };
+		1AD78804D5BD9BFBA66F7344 /* UpdaterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E54D17E35CD9FD1FA63AD3AB /* UpdaterManager.swift */; };
+		1D216E416F005D910D914A24 /* TargetPointSelectionCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7862FD43A10902F85A014E2F /* TargetPointSelectionCard.swift */; };
+		1FA63EA4A6530CF8FF422017 /* PermissionRequestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE312C65F54C5EB770D229A /* PermissionRequestView.swift */; };
+		21FDF3578FD92EB499F9181F /* PermissionStatusIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4142F0C955B1736D782CAE01 /* PermissionStatusIndicator.swift */; };
+		243CFF097A5EF030BEF71958 /* DeveloperUpdateButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 914D03F3AB26C995D763CE16 /* DeveloperUpdateButton.swift */; };
+		2609DD8C165FA3798127659B /* ClickType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80727193D7F4BD21DB9626FE /* ClickType.swift */; };
+		28E63A6F417B72999BAD5766 /* ActiveTimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35FB4EF694573BE5DF1A61F1 /* ActiveTimerView.swift */; };
+		30CDA5A54B6386F4D2DF4A8A /* ClickEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = E08575984E5DC487BAA26D67 /* ClickEngine.swift */; };
+		311EC4D122CE15372DA24EFA /* AppcastGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C367C91310A1474D694E396 /* AppcastGenerator.swift */; };
+		32C57723FB147EF9A30D85CA /* WindowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C669BC7238898D417B4D23CA /* WindowManager.swift */; };
+		39E7888D6694DD2001CF71D0 /* VisualFeedbackOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5EE0ECFAC92AADA3D21D62 /* VisualFeedbackOverlay.swift */; };
+		3E049DE49EE8DCE8FF4E76C4 /* PermissionsGateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DDA280FF109566406000117 /* PermissionsGateView.swift */; };
+		3FF48B625C8DC635916429EA /* ClickItViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD4451797DBB979C9D6E89F6 /* ClickItViewModel.swift */; };
+		4C93AF127B516DF6DC99993C /* StatusHeaderCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E792AA05B6A7C24372B636B0 /* StatusHeaderCard.swift */; };
+		536488CB011A55EEEE2E80EA /* WindowDetectionTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41BA36E908CD91F8E0329E25 /* WindowDetectionTestView.swift */; };
+		6335A09B6BA374D7CBF37D86 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11D5ADFF0352F89CE56DC1C9 /* ContentView.swift */; };
+		657C2BC32D6CE87B6ED8C54C /* WindowInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DA1EB7F06AA031061053B91 /* WindowInfo.swift */; };
+		6D4F5D0781662E28C8A64B23 /* AdvancedSettingsWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F8B1A79EE45C95B2DC5E10 /* AdvancedSettingsWindow.swift */; };
+		72B48F793BA1CBBBE78A575B /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5F35DE4D793FB2942A64CA /* StatisticsView.swift */; };
+		74DC06726CEAD5DCCDD0414B /* ConfigurationPanelCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AF4A94832149C6C5AC0B467 /* ConfigurationPanelCard.swift */; };
+		74FBE8B2DA722BD5394630D6 /* WindowDetectionTester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04311D27B69C50984F861D64 /* WindowDetectionTester.swift */; };
+		7E36979B14473F6C102F8564 /* PermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2201245625E40DF90BE7E2FF /* PermissionManager.swift */; };
+		82B1065E33EC0E9A480D8A93 /* SettingCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF97B4380400702C358562E /* SettingCard.swift */; };
+		82FAE51CF39AA43ABB2DB14C /* TimingSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2868F029DA41D3BE0DA36811 /* TimingSettings.swift */; };
+		8466E23D8F98F0A6ED836F05 /* ClickPointSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B8DF5ABCD7AEF806EDE81E6 /* ClickPointSelector.swift */; };
+		884D5CE8820C51A27D778CCC /* FooterInfoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0237E0D5A83FAA2872A673B /* FooterInfoCard.swift */; };
+		8C28744A69C0B59F301AE133 /* AutomationSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5355AC8AE33824542FBE75B /* AutomationSettings.swift */; };
+		905E17114383ED21140832E7 /* AdvancedTechnicalSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF13736A8D6CF0BEEA1D1D5D /* AdvancedTechnicalSettings.swift */; };
+		A0980BDDB5985C8964ACE0E4 /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14B14CC0C25D1E3A51403B35 /* AppConstants.swift */; };
+		A9E1081DEE56A7D144A5B181 /* TargetingSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 460CCB01AE5CAD4358A1A909 /* TargetingSettings.swift */; };
+		AE90A9410B3EF97B922C65C5 /* ClickSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CB55F3C71311916C8EA0417 /* ClickSettings.swift */; };
+		AECA257988C242B33A099AE6 /* FeedbackSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0ADC6E0A1529287693D372F /* FeedbackSettings.swift */; };
+		AF5DD60980311EB1095D6EE7 /* TimerConfigurationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 614FBC6F72CB657B84BAAD26 /* TimerConfigurationView.swift */; };
+		BD8F9B2A88F053FF6E92633D /* AdvancedSettingsButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD0059D3F3C5CECC73126A25 /* AdvancedSettingsButton.swift */; };
+		BDEE2782312A799DBFD6C139 /* RealTimeElapsedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD4A1CFF2A60FAFF7F0B2176 /* RealTimeElapsedView.swift */; };
+		C179C8C489C27E3ED8D75B63 /* HotkeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7612D5503F4DBE773897F12D /* HotkeyManager.swift */; };
+		D84C73B9C615B5E6CDF55D7F /* ConfigurationPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AD7904D110F095EF2B5DA5 /* ConfigurationPanel.swift */; };
+		EA855B3322DE8B93139EB7E3 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = FF4C4C977DA3EF58BFC68846 /* Sparkle */; };
+		EB9EF3F19727CC1C362E7EE9 /* ElapsedTimeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F7B16786AA42DC00F6D49C3 /* ElapsedTimeManager.swift */; };
+		EDD7991719B6F389496D060F /* SettingsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EAF73B4A252962317973C4E /* SettingsSection.swift */; };
+		EEB07164A296BF49FE11D1A1 /* ClickCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 038E18B9FD16D27843688967 /* ClickCoordinator.swift */; };
+		F661693F6B77567F936897DE /* ClickBehaviorSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0B52F33AC127C5F02439DB /* ClickBehaviorSettings.swift */; };
+		FE061CED06FED7B1CDDA3E90 /* UpdateNotificationCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95950FCAFF71B27EEF0FA09 /* UpdateNotificationCard.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		038E18B9FD16D27843688967 /* ClickCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickCoordinator.swift; sourceTree = "<group>"; };
+		04311D27B69C50984F861D64 /* WindowDetectionTester.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowDetectionTester.swift; sourceTree = "<group>"; };
+		0A4E61EC54CF5E60F502E3C7 /* ClickIt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ClickIt.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0FBD087FD856EF6655628296 /* .gitkeep */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitkeep; sourceTree = "<group>"; };
+		11D5ADFF0352F89CE56DC1C9 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		14B14CC0C25D1E3A51403B35 /* AppConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConstants.swift; sourceTree = "<group>"; };
+		1AF4A94832149C6C5AC0B467 /* ConfigurationPanelCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationPanelCard.swift; sourceTree = "<group>"; };
+		2201245625E40DF90BE7E2FF /* PermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionManager.swift; sourceTree = "<group>"; };
+		2868F029DA41D3BE0DA36811 /* TimingSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimingSettings.swift; sourceTree = "<group>"; };
+		35FB4EF694573BE5DF1A61F1 /* ActiveTimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveTimerView.swift; sourceTree = "<group>"; };
+		3B5EE0ECFAC92AADA3D21D62 /* VisualFeedbackOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualFeedbackOverlay.swift; sourceTree = "<group>"; };
+		3B5F35DE4D793FB2942A64CA /* StatisticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsView.swift; sourceTree = "<group>"; };
+		40045B2F9E6F8FDCC4B924F1 /* .gitkeep */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitkeep; sourceTree = "<group>"; };
+		4142F0C955B1736D782CAE01 /* PermissionStatusIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionStatusIndicator.swift; sourceTree = "<group>"; };
+		41BA36E908CD91F8E0329E25 /* WindowDetectionTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowDetectionTestView.swift; sourceTree = "<group>"; };
+		460CCB01AE5CAD4358A1A909 /* TargetingSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetingSettings.swift; sourceTree = "<group>"; };
+		488AA47A1878EED9D0DB558F /* BackgroundClicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundClicker.swift; sourceTree = "<group>"; };
+		4DDA280FF109566406000117 /* PermissionsGateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsGateView.swift; sourceTree = "<group>"; };
+		4EE312C65F54C5EB770D229A /* PermissionRequestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionRequestView.swift; sourceTree = "<group>"; };
+		4FF97B4380400702C358562E /* SettingCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingCard.swift; sourceTree = "<group>"; };
+		54378C96FA6BBE7848580B2A /* ClickItApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickItApp.swift; sourceTree = "<group>"; };
+		614FBC6F72CB657B84BAAD26 /* TimerConfigurationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerConfigurationView.swift; sourceTree = "<group>"; };
+		6DA1EB7F06AA031061053B91 /* WindowInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowInfo.swift; sourceTree = "<group>"; };
+		7612D5503F4DBE773897F12D /* HotkeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyManager.swift; sourceTree = "<group>"; };
+		7862FD43A10902F85A014E2F /* TargetPointSelectionCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetPointSelectionCard.swift; sourceTree = "<group>"; };
+		7CB55F3C71311916C8EA0417 /* ClickSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickSettings.swift; sourceTree = "<group>"; };
+		7EAF73B4A252962317973C4E /* SettingsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSection.swift; sourceTree = "<group>"; };
+		80727193D7F4BD21DB9626FE /* ClickType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickType.swift; sourceTree = "<group>"; };
+		8C367C91310A1474D694E396 /* AppcastGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppcastGenerator.swift; sourceTree = "<group>"; };
+		914D03F3AB26C995D763CE16 /* DeveloperUpdateButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperUpdateButton.swift; sourceTree = "<group>"; };
+		9B8DF5ABCD7AEF806EDE81E6 /* ClickPointSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickPointSelector.swift; sourceTree = "<group>"; };
+		9DD0B512DC59B56FDDC5E7B8 /* WindowTargeter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowTargeter.swift; sourceTree = "<group>"; };
+		9F7B16786AA42DC00F6D49C3 /* ElapsedTimeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElapsedTimeManager.swift; sourceTree = "<group>"; };
+		A0237E0D5A83FAA2872A673B /* FooterInfoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FooterInfoCard.swift; sourceTree = "<group>"; };
+		AA0B52F33AC127C5F02439DB /* ClickBehaviorSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickBehaviorSettings.swift; sourceTree = "<group>"; };
+		BC7CFAF78B42DA22D527036D /* Contents.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Contents.json; sourceTree = "<group>"; };
+		BD4451797DBB979C9D6E89F6 /* ClickItViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickItViewModel.swift; sourceTree = "<group>"; };
+		C0ADC6E0A1529287693D372F /* FeedbackSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackSettings.swift; sourceTree = "<group>"; };
+		C669BC7238898D417B4D23CA /* WindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowManager.swift; sourceTree = "<group>"; };
+		C95950FCAFF71B27EEF0FA09 /* UpdateNotificationCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateNotificationCard.swift; sourceTree = "<group>"; };
+		CDE5177A3317C4DAC63C0EF9 /* .gitkeep */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitkeep; sourceTree = "<group>"; };
+		CF13736A8D6CF0BEEA1D1D5D /* AdvancedTechnicalSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedTechnicalSettings.swift; sourceTree = "<group>"; };
+		D5355AC8AE33824542FBE75B /* AutomationSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationSettings.swift; sourceTree = "<group>"; };
+		DD4A1CFF2A60FAFF7F0B2176 /* RealTimeElapsedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealTimeElapsedView.swift; sourceTree = "<group>"; };
+		DDB2BB80E1FA0B04B4923B97 /* ClickPrecisionTester.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickPrecisionTester.swift; sourceTree = "<group>"; };
+		E08575984E5DC487BAA26D67 /* ClickEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickEngine.swift; sourceTree = "<group>"; };
+		E54D17E35CD9FD1FA63AD3AB /* UpdaterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdaterManager.swift; sourceTree = "<group>"; };
+		E792AA05B6A7C24372B636B0 /* StatusHeaderCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusHeaderCard.swift; sourceTree = "<group>"; };
+		E7F5072170878988E59156B3 /* .gitkeep */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitkeep; sourceTree = "<group>"; };
+		F0F8B1A79EE45C95B2DC5E10 /* AdvancedSettingsWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedSettingsWindow.swift; sourceTree = "<group>"; };
+		F143B3920D49853E2731EB32 /* .gitkeep */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitkeep; sourceTree = "<group>"; };
+		F3AD7904D110F095EF2B5DA5 /* ConfigurationPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationPanel.swift; sourceTree = "<group>"; };
+		FD0059D3F3C5CECC73126A25 /* AdvancedSettingsButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedSettingsButton.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4B2BC9F390682F3B31A0748A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EA855B3322DE8B93139EB7E3 /* Sparkle in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0C9842200B64B31FF95EE249 /* ClickIt */ = {
+			isa = PBXGroup;
+			children = (
+				54378C96FA6BBE7848580B2A /* ClickItApp.swift */,
+				3A78D9349292DACEA3351AC6 /* Core */,
+				1AEFB65446D3948B37A8BD54 /* Resources */,
+				4E730D224A43A4EF6FD11E6C /* UI */,
+				92AD63E0ED79679AE9EB2129 /* Utils */,
+			);
+			name = ClickIt;
+			path = Sources/ClickIt;
+			sourceTree = "<group>";
+		};
+		1AEFB65446D3948B37A8BD54 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				BBEE77ACD5B5408FE0288DB2 /* AppIcon.appiconset */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		270FF488A3A57E46800B410A /* Update */ = {
+			isa = PBXGroup;
+			children = (
+				8C367C91310A1474D694E396 /* AppcastGenerator.swift */,
+				E54D17E35CD9FD1FA63AD3AB /* UpdaterManager.swift */,
+			);
+			path = Update;
+			sourceTree = "<group>";
+		};
+		38FC5DF62BDCB2E21BBAB60B /* Click */ = {
+			isa = PBXGroup;
+			children = (
+				40045B2F9E6F8FDCC4B924F1 /* .gitkeep */,
+				488AA47A1878EED9D0DB558F /* BackgroundClicker.swift */,
+				038E18B9FD16D27843688967 /* ClickCoordinator.swift */,
+				E08575984E5DC487BAA26D67 /* ClickEngine.swift */,
+				DDB2BB80E1FA0B04B4923B97 /* ClickPrecisionTester.swift */,
+				80727193D7F4BD21DB9626FE /* ClickType.swift */,
+			);
+			path = Click;
+			sourceTree = "<group>";
+		};
+		3A78D9349292DACEA3351AC6 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				38FC5DF62BDCB2E21BBAB60B /* Click */,
+				5F9A9D243797DD9B70A42025 /* Hotkeys */,
+				6270EED0CC6646666F9CFEE1 /* Models */,
+				B1272BE75F3F375C0B7C4708 /* Permissions */,
+				75D5B3B6F597BEDA78B8397F /* Timer */,
+				270FF488A3A57E46800B410A /* Update */,
+				C2389358D330E6827E47B2CB /* Window */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		4E730D224A43A4EF6FD11E6C /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				67C173FF20B2F2CA6E08D2FB /* Components */,
+				6BA306963A38D92D1E46E936 /* ViewModels */,
+				F0D7BB7EDD2EC00139F37FC4 /* Views */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		5F9A9D243797DD9B70A42025 /* Hotkeys */ = {
+			isa = PBXGroup;
+			children = (
+				7612D5503F4DBE773897F12D /* HotkeyManager.swift */,
+			);
+			path = Hotkeys;
+			sourceTree = "<group>";
+		};
+		6270EED0CC6646666F9CFEE1 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				7CB55F3C71311916C8EA0417 /* ClickSettings.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		67C173FF20B2F2CA6E08D2FB /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				E7F5072170878988E59156B3 /* .gitkeep */,
+				35FB4EF694573BE5DF1A61F1 /* ActiveTimerView.swift */,
+				FD0059D3F3C5CECC73126A25 /* AdvancedSettingsButton.swift */,
+				9B8DF5ABCD7AEF806EDE81E6 /* ClickPointSelector.swift */,
+				F3AD7904D110F095EF2B5DA5 /* ConfigurationPanel.swift */,
+				1AF4A94832149C6C5AC0B467 /* ConfigurationPanelCard.swift */,
+				914D03F3AB26C995D763CE16 /* DeveloperUpdateButton.swift */,
+				A0237E0D5A83FAA2872A673B /* FooterInfoCard.swift */,
+				4142F0C955B1736D782CAE01 /* PermissionStatusIndicator.swift */,
+				DD4A1CFF2A60FAFF7F0B2176 /* RealTimeElapsedView.swift */,
+				4FF97B4380400702C358562E /* SettingCard.swift */,
+				3B5F35DE4D793FB2942A64CA /* StatisticsView.swift */,
+				E792AA05B6A7C24372B636B0 /* StatusHeaderCard.swift */,
+				7862FD43A10902F85A014E2F /* TargetPointSelectionCard.swift */,
+				614FBC6F72CB657B84BAAD26 /* TimerConfigurationView.swift */,
+				C95950FCAFF71B27EEF0FA09 /* UpdateNotificationCard.swift */,
+				3B5EE0ECFAC92AADA3D21D62 /* VisualFeedbackOverlay.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		6BA306963A38D92D1E46E936 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				BD4451797DBB979C9D6E89F6 /* ClickItViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		75D5B3B6F597BEDA78B8397F /* Timer */ = {
+			isa = PBXGroup;
+			children = (
+				9F7B16786AA42DC00F6D49C3 /* ElapsedTimeManager.swift */,
+			);
+			path = Timer;
+			sourceTree = "<group>";
+		};
+		92AD63E0ED79679AE9EB2129 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				A29F5E5A3D6031C35B65FCF0 /* Constants */,
+				FCE17BAD21812A33E320D993 /* Extensions */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		A29F5E5A3D6031C35B65FCF0 /* Constants */ = {
+			isa = PBXGroup;
+			children = (
+				14B14CC0C25D1E3A51403B35 /* AppConstants.swift */,
+			);
+			path = Constants;
+			sourceTree = "<group>";
+		};
+		B1272BE75F3F375C0B7C4708 /* Permissions */ = {
+			isa = PBXGroup;
+			children = (
+				CDE5177A3317C4DAC63C0EF9 /* .gitkeep */,
+				2201245625E40DF90BE7E2FF /* PermissionManager.swift */,
+			);
+			path = Permissions;
+			sourceTree = "<group>";
+		};
+		BBEE77ACD5B5408FE0288DB2 /* AppIcon.appiconset */ = {
+			isa = PBXGroup;
+			children = (
+				BC7CFAF78B42DA22D527036D /* Contents.json */,
+			);
+			path = AppIcon.appiconset;
+			sourceTree = "<group>";
+		};
+		BE4389BFA0DB98E6DEFCDF73 = {
+			isa = PBXGroup;
+			children = (
+				0C9842200B64B31FF95EE249 /* ClickIt */,
+				E746A2AA8D78D7EC3F50D36C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		C2389358D330E6827E47B2CB /* Window */ = {
+			isa = PBXGroup;
+			children = (
+				0FBD087FD856EF6655628296 /* .gitkeep */,
+				04311D27B69C50984F861D64 /* WindowDetectionTester.swift */,
+				6DA1EB7F06AA031061053B91 /* WindowInfo.swift */,
+				C669BC7238898D417B4D23CA /* WindowManager.swift */,
+				9DD0B512DC59B56FDDC5E7B8 /* WindowTargeter.swift */,
+			);
+			path = Window;
+			sourceTree = "<group>";
+		};
+		E746A2AA8D78D7EC3F50D36C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0A4E61EC54CF5E60F502E3C7 /* ClickIt.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F0D7BB7EDD2EC00139F37FC4 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				F0F8B1A79EE45C95B2DC5E10 /* AdvancedSettingsWindow.swift */,
+				CF13736A8D6CF0BEEA1D1D5D /* AdvancedTechnicalSettings.swift */,
+				D5355AC8AE33824542FBE75B /* AutomationSettings.swift */,
+				AA0B52F33AC127C5F02439DB /* ClickBehaviorSettings.swift */,
+				11D5ADFF0352F89CE56DC1C9 /* ContentView.swift */,
+				C0ADC6E0A1529287693D372F /* FeedbackSettings.swift */,
+				4EE312C65F54C5EB770D229A /* PermissionRequestView.swift */,
+				4DDA280FF109566406000117 /* PermissionsGateView.swift */,
+				7EAF73B4A252962317973C4E /* SettingsSection.swift */,
+				460CCB01AE5CAD4358A1A909 /* TargetingSettings.swift */,
+				2868F029DA41D3BE0DA36811 /* TimingSettings.swift */,
+				41BA36E908CD91F8E0329E25 /* WindowDetectionTestView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		FCE17BAD21812A33E320D993 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				F143B3920D49853E2731EB32 /* .gitkeep */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		81C7CDC3E5D5C9F5654F8319 /* ClickIt */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E25C6B3B3C6B38449685495C /* Build configuration list for PBXNativeTarget "ClickIt" */;
+			buildPhases = (
+				BA982CC042DE8162E45E97F4 /* Sources */,
+				A7B92752D180BF6F97C33F3F /* Resources */,
+				4B2BC9F390682F3B31A0748A /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ClickIt;
+			packageProductDependencies = (
+				FF4C4C977DA3EF58BFC68846 /* Sparkle */,
+			);
+			productName = ClickIt;
+			productReference = 0A4E61EC54CF5E60F502E3C7 /* ClickIt.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D8C1B57067245E190EA869E7 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					81C7CDC3E5D5C9F5654F8319 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 9559C7AB80539C4BA59DC2CA /* Build configuration list for PBXProject "ClickIt" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = BE4389BFA0DB98E6DEFCDF73;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				5D4E1094ADEEDD0D9CF63038 /* XCRemoteSwiftPackageReference "Sparkle" */,
+			);
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				81C7CDC3E5D5C9F5654F8319 /* ClickIt */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A7B92752D180BF6F97C33F3F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				12DA953DD023F97F3090F38C /* Contents.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		BA982CC042DE8162E45E97F4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				28E63A6F417B72999BAD5766 /* ActiveTimerView.swift in Sources */,
+				BD8F9B2A88F053FF6E92633D /* AdvancedSettingsButton.swift in Sources */,
+				6D4F5D0781662E28C8A64B23 /* AdvancedSettingsWindow.swift in Sources */,
+				905E17114383ED21140832E7 /* AdvancedTechnicalSettings.swift in Sources */,
+				A0980BDDB5985C8964ACE0E4 /* AppConstants.swift in Sources */,
+				311EC4D122CE15372DA24EFA /* AppcastGenerator.swift in Sources */,
+				8C28744A69C0B59F301AE133 /* AutomationSettings.swift in Sources */,
+				0A82BE46023C8D2B1A2E4370 /* BackgroundClicker.swift in Sources */,
+				F661693F6B77567F936897DE /* ClickBehaviorSettings.swift in Sources */,
+				EEB07164A296BF49FE11D1A1 /* ClickCoordinator.swift in Sources */,
+				30CDA5A54B6386F4D2DF4A8A /* ClickEngine.swift in Sources */,
+				04C54284E141A3B21B788D01 /* ClickItApp.swift in Sources */,
+				3FF48B625C8DC635916429EA /* ClickItViewModel.swift in Sources */,
+				8466E23D8F98F0A6ED836F05 /* ClickPointSelector.swift in Sources */,
+				05684175A538D396B0C3EE42 /* ClickPrecisionTester.swift in Sources */,
+				AE90A9410B3EF97B922C65C5 /* ClickSettings.swift in Sources */,
+				2609DD8C165FA3798127659B /* ClickType.swift in Sources */,
+				D84C73B9C615B5E6CDF55D7F /* ConfigurationPanel.swift in Sources */,
+				74DC06726CEAD5DCCDD0414B /* ConfigurationPanelCard.swift in Sources */,
+				6335A09B6BA374D7CBF37D86 /* ContentView.swift in Sources */,
+				243CFF097A5EF030BEF71958 /* DeveloperUpdateButton.swift in Sources */,
+				EB9EF3F19727CC1C362E7EE9 /* ElapsedTimeManager.swift in Sources */,
+				AECA257988C242B33A099AE6 /* FeedbackSettings.swift in Sources */,
+				884D5CE8820C51A27D778CCC /* FooterInfoCard.swift in Sources */,
+				C179C8C489C27E3ED8D75B63 /* HotkeyManager.swift in Sources */,
+				7E36979B14473F6C102F8564 /* PermissionManager.swift in Sources */,
+				1FA63EA4A6530CF8FF422017 /* PermissionRequestView.swift in Sources */,
+				21FDF3578FD92EB499F9181F /* PermissionStatusIndicator.swift in Sources */,
+				3E049DE49EE8DCE8FF4E76C4 /* PermissionsGateView.swift in Sources */,
+				BDEE2782312A799DBFD6C139 /* RealTimeElapsedView.swift in Sources */,
+				82B1065E33EC0E9A480D8A93 /* SettingCard.swift in Sources */,
+				EDD7991719B6F389496D060F /* SettingsSection.swift in Sources */,
+				72B48F793BA1CBBBE78A575B /* StatisticsView.swift in Sources */,
+				4C93AF127B516DF6DC99993C /* StatusHeaderCard.swift in Sources */,
+				1D216E416F005D910D914A24 /* TargetPointSelectionCard.swift in Sources */,
+				A9E1081DEE56A7D144A5B181 /* TargetingSettings.swift in Sources */,
+				AF5DD60980311EB1095D6EE7 /* TimerConfigurationView.swift in Sources */,
+				82FAE51CF39AA43ABB2DB14C /* TimingSettings.swift in Sources */,
+				FE061CED06FED7B1CDDA3E90 /* UpdateNotificationCard.swift in Sources */,
+				1AD78804D5BD9BFBA66F7344 /* UpdaterManager.swift in Sources */,
+				39E7888D6694DD2001CF71D0 /* VisualFeedbackOverlay.swift in Sources */,
+				536488CB011A55EEEE2E80EA /* WindowDetectionTestView.swift in Sources */,
+				74FBE8B2DA722BD5394630D6 /* WindowDetectionTester.swift in Sources */,
+				657C2BC32D6CE87B6ED8C54C /* WindowInfo.swift in Sources */,
+				32C57723FB147EF9A30D85CA /* WindowManager.swift in Sources */,
+				0D04ED7B7D38EA4728A12FF2 /* WindowTargeter.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		09E6F692BE7DC87F5CEB5EAE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		482C367C2943031B7BCC96A8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		6618B08AE581FEC9AF3B9613 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = ClickIt.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jsonify.clickit;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		C0AFE33D6107BCEDBFA03E38 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = ClickIt.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jsonify.clickit;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		9559C7AB80539C4BA59DC2CA /* Build configuration list for PBXProject "ClickIt" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				09E6F692BE7DC87F5CEB5EAE /* Debug */,
+				482C367C2943031B7BCC96A8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		E25C6B3B3C6B38449685495C /* Build configuration list for PBXNativeTarget "ClickIt" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C0AFE33D6107BCEDBFA03E38 /* Debug */,
+				6618B08AE581FEC9AF3B9613 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		5D4E1094ADEEDD0D9CF63038 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		FF4C4C977DA3EF58BFC68846 /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5D4E1094ADEEDD0D9CF63038 /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = D8C1B57067245E190EA869E7 /* Project object */;
+}
